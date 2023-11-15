@@ -382,7 +382,7 @@ function Usuario() {
     }
   }
 
-  return <Container className='card-local'>
+  return <Container className='card-local p-3'>
     {/* <div className='flex p-2 card-local'>
       <div className='w-11/12'>
         <InputSearch onChange={(e) => search(e.currentTarget.value)} autoFocus />
@@ -397,7 +397,7 @@ function Usuario() {
         cssSearch='w-11/12'
         headerChildren={
           <div className='w-1/12 mr-2'>
-            <ButtonIcon label="Novo" icon={<FaPlus />} width={'100%'} onClick={onNovo} />
+            <ButtonIcon borderColor={colors.primary} label="Novo" icon={<FaPlus />} width={'100%'} onClick={onNovo} />
           </div>
         }
         columns={columns}
@@ -407,7 +407,6 @@ function Usuario() {
         // showRowLines
         rowAlternationEnabled
         showBorders
-        showColumnLines
         hoverStateEnabled
         isSelectRow
       // onInitialized={(e) => setGridInstance(e.component)}
@@ -416,7 +415,7 @@ function Usuario() {
         <Column dataField='nome' caption='NOME' alignment='left' dataType='string' cssClass='font-bold' />
         <Column dataField='cargo' caption='CARGO' alignment='center' dataType='' width={100} cellRender={renderCell} allowSearch={false} />
         <Column dataField='email' caption='E-MAIL' alignment='left' dataType='string' cssClass='font-bold column-2' width={220} />
-        <Column dataField='dataCriacao' caption='DATA CRIAÇÃO' alignment='center' dataType='string' width={140} allowSearch={false} cellRender={formatDate} />
+        <Column dataField='dateCreate' caption='DATA CRIAÇÃO' alignment='center' dataType='string' width={140} allowSearch={false} cellRender={formatDate} />
         <Column dataField='telefone' caption='TELEFONE' alignment='center' dataType='date' width={120} allowSearch={false} />
         <Column dataField='acesso' caption='ACESSO' alignment='center' dataType='date' width={140} allowSearch={false} cellRender={formatDate} />
         <Column dataField='status' caption='STATUS' alignment='center' dataType='number' width={100} cellRender={renderCell} allowSearch={false} />

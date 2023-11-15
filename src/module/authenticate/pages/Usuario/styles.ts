@@ -2,7 +2,7 @@ import { Table } from './../../../venda/pages/Pdv/styles';
 import styled from "styled-components";
 
 export const Container  = styled.div`
-
+height: calc(100vh - 75px);
     //adicionar stylos
 
 @media screen and (max-width: 40em) {
@@ -25,7 +25,7 @@ export const FormContainer  = styled.form`
 export const TableContainer  = styled.div`
 
     //adicionar stylos
-    height: calc(100vh - 125px);
+    height: calc(100vh - 135px);
 
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo

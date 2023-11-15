@@ -34,5 +34,10 @@ export const MenuContainer = styled.nav`
         font-size: 45px;
         filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
         margin-left:3px ;
+        transition: all 0.5s;
+        transform: translateY(0px);
+        & :hover{
+            transform: translateY(-2px);
+        }
     }
 `;

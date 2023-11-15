@@ -26,7 +26,7 @@ export const DialogPopupConfirme: React.FC<DialogPoupConfirmeProps> = (props) =>
           },
           content: {
             width: "40vw",
-            height: "30vh",
+            height: "35vh",
             left: "30vw",
             top: "30vh",
             border: 0,

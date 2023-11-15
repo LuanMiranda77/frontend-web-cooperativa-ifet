@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import DataGrid, {
   GroupPanel,
   IColumnProps,
@@ -60,33 +61,34 @@ export const DataGridDefault: React.FC<DataGridDefaultProps> = (props) => {
           {props.headerChildren}
         </Header>
       )}
-      <DataGrid
-        id="gridContainer"
-        dataSource={props.dataSource}
-        allowColumnReordering={true}
-        rowAlternationEnabled={props.rowAlternationEnabled}
-        showBorders={props.showBorders}
-        showRowLines={props.showRowLines}
-        showColumnLines={props.showColumnLines}
-        hoverStateEnabled={props.hoverStateEnabled}
-        height={"100%"}
-        onSelectionChanged={props.onSelectionChanged}
-        onInitialized={(e) => setGridInstance(e.component)}
-        onInitNewRow={props.onInitNewRow}
-        onEditorPrepared={props.onEditorPrepared}
-        onRowClick={props.onRowClick}
-        onRowDblClick={props.onRowDblClick}
-        onCellPrepared={props.onCellPrepared}
-        noDataText={""}
-        // dateSerializationFormat='dd/MM/yyyyTHH:mm:ss'
-      >
-        {props.isSelectRow ? <Selection mode={props.moduloSeletion} /> : null}
-        <GroupPanel visible={props.columnGroup} />
-        {/* <SearchPanel visible={props.isSearch} /> */}
-        {/* <Grouping autoExpandAll={true} /> */}
-        {props.children}
+      
+        <DataGrid
+          id="gridContainer"
+          dataSource={props.dataSource}
+          allowColumnReordering={true}
+          rowAlternationEnabled={props.rowAlternationEnabled}
+          showBorders={props.showBorders}
+          showRowLines={props.showRowLines}
+          showColumnLines={props.showColumnLines}
+          hoverStateEnabled={props.hoverStateEnabled}
+          height={"100%"}
+          onSelectionChanged={props.onSelectionChanged}
+          onInitialized={(e) => setGridInstance(e.component)}
+          onInitNewRow={props.onInitNewRow}
+          onEditorPrepared={props.onEditorPrepared}
+          onRowClick={props.onRowClick}
+          onRowDblClick={props.onRowDblClick}
+          onCellPrepared={props.onCellPrepared}
+          noDataText={"Sem dados para carregar..."}
+          // dateSerializationFormat='dd/MM/yyyyTHH:mm:ss'
+        >
+          {props.isSelectRow ? <Selection mode={props.moduloSeletion} /> : null}
+          <GroupPanel visible={props.columnGroup} />
+          {/* <SearchPanel visible={props.isSearch} /> */}
+          {/* <Grouping autoExpandAll={true} /> */}
+          {props.children}
 
-        {/* {props.columns.map((column, key) => {
+          {/* {props.columns.map((column, key) => {
         return <Column
           key={key}
           dataField={column.dataField}
@@ -107,12 +109,15 @@ export const DataGridDefault: React.FC<DataGridDefaultProps> = (props) => {
 
       })} */}
 
-        <Paging
-          defaultPageSize={props.defaultPageSize}
-          enabled={props.paginar}
-        />
-        <Pager allowedPageSizes={props.pageSizes} showPageSizeSelector={true} />
-      </DataGrid>
+          <Paging
+            defaultPageSize={props.defaultPageSize}
+            enabled={props.paginar}
+          />
+          <Pager
+            allowedPageSizes={props.pageSizes}
+            showPageSizeSelector={true}
+          />
+        </DataGrid>
     </Container>
   );
 };

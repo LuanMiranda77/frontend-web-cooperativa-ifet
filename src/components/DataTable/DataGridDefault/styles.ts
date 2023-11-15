@@ -7,17 +7,19 @@ export const Container  = styled.div`
     width: 100%;
 
     .dx-datagrid .dx-header-row > td {
-        color: ${color => color.theme.colors.primary};
+        color: ${color => color.theme.colors.white};
         font-weight: bold;
-        /* background-color: ${color => color.theme.colors.primary};; */
+        background-color: ${color => color.theme.colors.primary};;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
     }
    .dx-row.dx-data-row.dx-column-lines.dx-state-hover td {  
         background:  ${color => color.theme.colors.dns_info} !important;
         /* cursor: pointer;   */
     } 
     .dx-row.dx-data-row td {  
-        background:  ${color => (color.theme.title === 'dark'?color.theme.colors.secondary:'')} !important;
-        color: ${color => (color.theme.title === 'dark'?color.theme.colors.textLabel:'')};
+        background:  ${color => (color.theme.title === 'dark'?color.theme.colors.secondary:color.theme.colors.tertiary)} !important;
+        color: ${color => (color.theme.title === 'dark'?color.theme.colors.textLabel:color.theme.colors.textLabel)};
         /* cursor: pointer;   */
     } 
 

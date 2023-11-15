@@ -16,6 +16,7 @@ import { UtilsUserLocal } from "../../utils/utils_userLocal";
 import { Divider } from "../Divider";
 import { InputSelectEstabelecimento } from "../Inputs/InputSelectEstabelecimento";
 import { Container } from "./styles";
+import icon from '../../assets/Logo/icon_white.png'
 interface Props {
   //adicionar os props
   alterTheme(): void;
@@ -69,7 +70,7 @@ export const MainHeader: React.FC<Props> = ({ alterTheme, onClickMenu, onClose }
   return (
     <Container className="" style={{ boxShadow: '0px 15px 10px gray' }} onClick={onCloseAll}>
       <div className="flex text-left" style={{ width: '60%' }}>
-        <button
+        {/* <button
           style={{
             backgroundColor: "transparent",
             border: 0,
@@ -80,7 +81,8 @@ export const MainHeader: React.FC<Props> = ({ alterTheme, onClickMenu, onClose }
           onClick={onClickMenu}
         >
           <FaBars />
-        </button>
+        </button> */}
+        <img className="w-8 drop-shadow-md mr-5" src={icon} alt="logo"/>
         <InputSelectEstabelecimento />
 
       </div>
