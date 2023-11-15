@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import Usuario from '../Usuario';
+
+<Meta title="Components/Buttons" component={ Usuario }/>
+
+# 🔘→Usuario
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="Usuario"
+    args=""
+  >
+    { (args) => < Usuario  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ Usuario } />

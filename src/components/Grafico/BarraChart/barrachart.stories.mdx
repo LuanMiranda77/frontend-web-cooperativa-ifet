@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import BarraChart from '../BarraChart';
+
+<Meta title="Components/Buttons" component={ BarraChart }/>
+
+# 🔘→BarraChart
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="BarraChart"
+    args=""
+  >
+    { (args) => < BarraChart  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ BarraChart } />

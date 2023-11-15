@@ -1,0 +1,8 @@
+{
+    "TYPES":[{"name":"MASTER", "value": 1}, {"name":"ADMIN", "value": 2}, {"name":"NORMAL", "value": 3}],
+
+    "STATUS":{
+        "ATIVO": "S",
+        "INATIVO": "N"
+    }
+}

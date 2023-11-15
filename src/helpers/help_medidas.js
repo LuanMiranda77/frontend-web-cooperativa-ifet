@@ -1,0 +1,15 @@
+export const unidades = [
+    {label:'CT', value:'CT'},   
+    {label:'CX', value:'CX'},   
+    {label:'DZ', value:'DZ'},   
+    {label:'GS', value:'GS'},   
+    {label:'LT', value:'LT'},   
+    {label:'MT', value:'MT'},   
+    {label:'PA', value:'PA'},   
+    {label:'PC', value:'PC'},   
+    {label:'PT', value:'PT'},   
+    {label:'RL', value:'RL'},   
+    {label:'SC', value:'SC'},   
+    {label:'UN', value:'UN'},   
+    {label:'UND', value:'UND'},   
+];

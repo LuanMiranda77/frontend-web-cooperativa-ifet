@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import ModalDefault from '../ModalDefault';
+
+<Meta title="Components/Buttons" component={ ModalDefault }/>
+
+# 🔘→ModalDefault
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="ModalDefault"
+    args=""
+  >
+    { (args) => < ModalDefault  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ ModalDefault } />

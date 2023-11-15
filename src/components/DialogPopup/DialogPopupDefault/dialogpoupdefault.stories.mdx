@@ -1,0 +1,27 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import DialogPoupDefault from '../DialogPoupDefault';
+
+<Meta title="Components/DialogPoup/DialogPoupDefault" component={ DialogPoupDefault }/>
+
+# 🔘→DialogPoupDefault
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="DialogPoupDefault"
+    args={
+      title:'Aviso',
+      isOpen:true,
+      onRequestClose: () => void,
+    }
+  >
+    { (args) => < DialogPoupDefault  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ DialogPoupDefault } />

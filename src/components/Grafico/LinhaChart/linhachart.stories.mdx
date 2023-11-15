@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import LinhaChart from '../LinhaChart';
+
+<Meta title="Components/Buttons" component={ LinhaChart }/>
+
+# 🔘→LinhaChart
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="LinhaChart"
+    args=""
+  >
+    { (args) => < LinhaChart  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ LinhaChart } />

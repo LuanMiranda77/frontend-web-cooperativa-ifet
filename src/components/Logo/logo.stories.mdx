@@ -1,0 +1,30 @@
+import {Meta,Canvas,Story,ArgsTable } from '@storybook/addon-docs';
+import {Logo} from '../Logo';
+
+
+<Meta title='components' component={Logo}/>
+
+# 🧩→Logo
+_________
+
+__Description:__
+
+O componente *InputBase* é um input personalizado para o projeto com três opções destintas que
+podem ser setadas pelo o desenvolvedor.
+
+____________________________________
+<Canvas>
+ <Story
+    name="Logo"
+    args={{ 
+        ...Logo.defaultProps,
+          size:"LARGE",
+    }}
+  >
+    {(args) => <Logo  {...args} />}
+  </Story>
+<ArgsTable of={Logo} />
+
+
+
+

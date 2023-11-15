@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import Produto from '../Produto';
+
+<Meta title="Components/Buttons" component={ Produto }/>
+
+# 🔘→Produto
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="Produto"
+    args=""
+  >
+    { (args) => < Produto  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ Produto } />

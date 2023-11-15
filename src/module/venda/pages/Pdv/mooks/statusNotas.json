@@ -1,0 +1,8 @@
+{
+    "tipos":[
+        {"value":"", "label":"TODAS AS NOTAS"},
+        {"value":"A", "label":"AUTORIZADA"},
+        {"value":"P", "label":"PENDENTE"},
+        {"value":"C", "label":"CANCELADA"}
+    ]
+}

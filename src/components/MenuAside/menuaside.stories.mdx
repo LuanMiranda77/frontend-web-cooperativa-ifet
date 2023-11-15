@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import MenuAside from '../MenuAside';
+
+<Meta title="Components/Buttons" component={ MenuAside }/>
+
+# 🔘→MenuAside
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="MenuAside"
+    args=""
+  >
+    { (args) => < MenuAside  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ MenuAside } />

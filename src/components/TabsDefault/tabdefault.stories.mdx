@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import TabDefault from '../TabDefault';
+
+<Meta title="Components/Buttons" component={ TabDefault }/>
+
+# 🔘→TabDefault
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="TabDefault"
+    args=""
+  >
+    { (args) => < TabDefault  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ TabDefault } />

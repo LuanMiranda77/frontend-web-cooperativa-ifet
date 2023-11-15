@@ -1,0 +1,37 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import Login from '../Login'
+import RecuperaSenha from '../RecuperaSenha'
+
+<Meta title="Modulos/authenticate/pages" component={Login}/>
+
+<div>
+<h1>Tela de autentiação</h1>
+
+<br/>
+</div>
+__• Descrição:__
+
+
+
+<Canvas>
+  <Story
+    name="Login"
+   
+  >
+    {(args) => <Login  {...args} />}
+  </Story>
+  <Story
+    name="Recupera Senha"
+   
+  >
+    {(args) => <RecuperaSenha  {...args} />}
+  </Story>
+</Canvas>
+
+<ArgsTable of={Login} />
+<ArgsTable of={RecuperaSenha} />
+
+
+
+
+

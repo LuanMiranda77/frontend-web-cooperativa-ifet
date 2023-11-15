@@ -1,0 +1,22 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import MainHeader from '../MainHeader';
+
+<Meta title="Components/Layout" component={ MainHeader }/>
+
+# 🔘→MainHeader
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="MainHeader"
+  >
+    { (args) => < MainHeader  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ MainHeader } />

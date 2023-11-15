@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import InputSearch from '../InputSearch';
+
+<Meta title="Components/Buttons" component={ InputSearch }/>
+
+# 🔘→InputSearch
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="InputSearch"
+    args=""
+  >
+    { (args) => < InputSearch  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ InputSearch } />

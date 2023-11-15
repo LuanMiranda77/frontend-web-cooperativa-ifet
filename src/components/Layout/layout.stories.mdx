@@ -1,0 +1,30 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import Layout from '../Layout';
+import {ThemeProvider} from 'styled-components';
+import {ThemeContext} from './hooks/theme';
+
+
+<Meta title="Components/Layout" component={ Layout }/>
+
+
+# 🔘→Content
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="Layout"
+     args={{ 
+        ...Layout.defaultProps,
+        setDefaultTheme={ThemeContext.ThemeProvider()}
+    }}
+  >
+    { (args) => < Layout  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ Layout } />

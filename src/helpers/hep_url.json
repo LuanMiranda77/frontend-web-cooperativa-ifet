@@ -1,0 +1,7 @@
+{
+    "URL":{
+        "LOCALHOST": "http://localhost:3000/",
+        "PRODUTION": "https://prodution/",
+        "TEST":"https://teste/"
+    }
+}

@@ -1,0 +1,62 @@
+import {Meta,Canvas,Story,ArgsTable } from '@storybook/addon-docs';
+import {InputBase} from '../InputBase';
+
+<Meta title='components/Inputs' component={InputBase}/>
+
+# 🧩→InputBase
+_________
+
+__Description:__
+
+O componente *InputBase* é um input personalizado para o projeto com três opções destintas que
+podem ser setadas pelo o desenvolvedor.
+
+
+
+
+____________________________________
+__1º Opção → model='input_base'→__
+
+__2º Opção → model='input_line'→__
+
+__3º Opção → model='input_super'→__
+____________________________________
+<br/>
+
+<Canvas>
+  <Story
+    name="input_base"
+    args={{ 
+        ...InputBase.defaultProps,
+          type: 'text',
+          model: 'input_base',
+          label: 'nome',
+    }}
+  >
+    {(args) => <InputBase  {...args} />}
+  </Story>
+  <Story
+    name="input_super"
+    args={{ 
+        ...InputBase.defaultProps,
+          type: 'email',
+          model: 'input_super',
+          label: 'E-mail',
+    }}
+  >
+    {(args) => <InputBase  {...args} />}
+  </Story>
+  <Story
+    name="input_line"
+    args={{ 
+        ...InputBase.defaultProps,
+          type: 'password',
+          model: 'input_line',
+          label: 'senha',
+    }}
+  >
+    {(args) => <InputBase  {...args} />}
+  </Story>
+</Canvas>
+
+<ArgsTable of={InputBase} />

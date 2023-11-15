@@ -1,0 +1,78 @@
+import {Meta,Canvas,Story,ArgsTable, Title, IconGallery, IconItem  } from '@storybook/addon-docs';
+import {IconButton} from '../IconButton';
+import {BsPlusLg} from "react-icons/bs";
+import { BsFillQuestionDiamondFill } from 'react-icons/bs';
+import { BsFillPencilFill } from "react-icons/bs";
+import {BsSearch} from "react-icons/bs";
+import {BsTrashFill} from 'react-icons/bs';
+
+<Meta title="Components/Buttons" component={IconButton}/>
+
+# 🧩→IconButton
+_________
+__Description:__
+
+São icons primararios que podem ser alterados de qualquer maneira.
+
+__O projeto conta com a bliblioteca__ *react-icons* __uma das mais completas libs de icones para react.__
+
+Disponivel pelo link: https://react-icons.github.io/react-icons/
+
+____________________________________
+__Galeria de icons básico do projeto→__
+____________________________________
+<br/>
+
+<IconGallery>
+  <IconItem name="new">
+    <BsPlusLg className='new' name="new"/>
+  </IconItem>
+  <IconItem name="edit">
+     <BsFillPencilFill name="edit" />
+  </IconItem>
+  <IconItem name="remove">
+    <BsTrashFill name="remove" />
+  </IconItem>
+  <IconItem name="search">
+     <BsSearch name="search" />
+  </IconItem>
+  <IconItem name="calendar">
+    <BsSearch name="calendar" />
+  </IconItem>
+   <IconItem name="paintbrush">
+    <BsTrashFill name="paintbrush" />
+  </IconItem>
+   <IconItem name="add">
+    <BsFillQuestionDiamondFill name="add" />
+  </IconItem>
+  <IconItem name="subtract">
+    <IconExample name="subtract" />
+  </IconItem>
+   <IconItem name="document">
+    <IconExample name="document" />
+  </IconItem>
+  <IconItem name="graphline">
+    <IconExample name="graphline" />
+  </IconItem>
+
+</IconGallery>
+
+<Canvas>
+  <Story
+    name="IconButton"
+    args={{ 
+        ...IconButton.defaultProps,
+        icon:'new',
+        
+    }}
+  >
+    {(args) => <IconButton  {...args} />}
+  </Story>
+</Canvas>
+
+<ArgsTable of={IconButton} />
+
+
+
+
+

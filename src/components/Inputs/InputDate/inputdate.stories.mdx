@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import InputDate from '../InputDate';
+
+<Meta title="Components/Buttons" component={ InputDate }/>
+
+# 🔘→InputDate
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="InputDate"
+    args=""
+  >
+    { (args) => < InputDate  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ InputDate } />

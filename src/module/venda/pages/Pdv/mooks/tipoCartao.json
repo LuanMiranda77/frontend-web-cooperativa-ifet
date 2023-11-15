@@ -1,0 +1,6 @@
+{
+    "tipos":[
+        {"value":1, "label":"CRÉDITO"},
+        {"value":2, "label":"DÉBITO"}
+    ]
+}

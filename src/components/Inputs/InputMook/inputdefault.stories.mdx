@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import InputDefault from '../InputDefault';
+
+<Meta title="Components/Buttons" component={ InputDefault }/>
+
+# 🔘→InputDefault
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="InputDefault"
+    args=""
+  >
+    { (args) => < InputDefault  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ InputDefault } />

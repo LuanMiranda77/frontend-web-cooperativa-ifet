@@ -1,0 +1,23 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import NavTab from '../NavTab';
+
+<Meta title="Components/Buttons" component={ NavTab }/>
+
+# 🔘→NavTab
+_________
+
+__Description:__
+
+<!-- digite aqui a descrição -->
+_________
+
+<Canvas>
+  <Story
+    name="NavTab"
+    args=""
+  >
+    { (args) => < NavTab  {...args} /> }
+  </Story>
+</Canvas>
+
+<ArgsTable of={ NavTab } />

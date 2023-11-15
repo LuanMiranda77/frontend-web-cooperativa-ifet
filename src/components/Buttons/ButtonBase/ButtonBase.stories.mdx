@@ -1,0 +1,38 @@
+import {Meta,Canvas,Story,ArgsTable} from '@storybook/addon-docs/blocks';
+import {ButtonBase} from '../ButtonBase';
+
+<Meta title="components/Buttons" parameters={{
+    actions: {
+      handles: ['mouseover', 'click .btn'],
+    },
+  }}  component={ButtonBase}/>
+
+# 🔘→ButtonBase
+_________
+
+__Description:__
+
+Botão de basicos do projeto que podem ser alterados no compomente __ButtonBase__
+_________
+
+<Canvas>
+  <Story
+    name="ButtonBase"
+    args={{ 
+        ...ButtonBase.defaultProps,
+        model:'btn_base',
+        label:'Entre', 
+        size:'small',
+        className:'primary-color'
+    }}
+  >
+    {(args) => <ButtonBase  {...args} />}
+  </Story>
+</Canvas>
+
+<ArgsTable of={ButtonBase} />
+
+
+
+
+
