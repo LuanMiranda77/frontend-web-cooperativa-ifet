@@ -42,7 +42,7 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
   });
 
   return (
-    <Container className="w-full">
+    <Container>
       <Dialog
         className="m-0"
         open={props.isOpen}
@@ -50,7 +50,7 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
         // TransitionComponent={transition}
         maxWidth={props.maxWidth ? props.maxWidth : false}
         fullScreen={props.isFullScreen ? props.isFullScreen : false}
-        fullWidth={true}
+        // fullWidth={true}
         
       >
         <DialogTitle

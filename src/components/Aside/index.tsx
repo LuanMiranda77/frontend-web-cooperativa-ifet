@@ -73,7 +73,7 @@ export function Aside() {
         {userAplication.cargo === Cargo.ADMIN ||
         userAplication.cargo === Cargo.MASTER ? (
           <ButtonMenu
-            link="/estabelecimento"
+            link="/estabelecimentos"
             icon={<FaStoreAlt className="btn-menu" />}
             label="Setores"
           />

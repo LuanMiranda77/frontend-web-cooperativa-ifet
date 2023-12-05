@@ -10,8 +10,8 @@ export const Container  = styled.div`
         color: ${color => color.theme.colors.white};
         font-weight: bold;
         background-color: ${color => color.theme.colors.primary};;
-        border-top-right-radius: 5px;
-        border-top-left-radius: 5px;
+        /* border-top-right-radius: 5px;
+        border-top-left-radius: 5px; */
     }
    .dx-row.dx-data-row.dx-column-lines.dx-state-hover td {  
         background:  ${color => color.theme.colors.dns_info} !important;

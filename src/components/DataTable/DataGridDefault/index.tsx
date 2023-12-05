@@ -51,7 +51,7 @@ export const DataGridDefault: React.FC<DataGridDefaultProps> = (props) => {
   return (
     <Container>
       {props.isSearch && (
-        <Header className="flex  card-local justify-between">
+        <Header className="flex bg-white justify-between items-center p-2">
           <div className={props.cssSearch}>
             <InputSearch
               onChange={(e) => onSearch(e.currentTarget.value)}

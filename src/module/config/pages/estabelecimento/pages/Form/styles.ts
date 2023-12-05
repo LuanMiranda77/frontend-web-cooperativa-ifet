@@ -22,7 +22,6 @@ export const Container  = styled.div`
 
 export const FormContainer  = styled.form`
 
-    //adicionar stylo
 
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo
