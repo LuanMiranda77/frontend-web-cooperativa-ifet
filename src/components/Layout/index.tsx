@@ -38,11 +38,6 @@ export const Layout: React.FC<Props> = (props) => {
           onClickMenu={visibleAside}
           onClose={onCloseMenu}
         />
-        <ContainerMenu className="" style={{ width: sizeMenu }} id='menuAside'>
-          <div id='menuItem' style={{ display: sizeMenu === '0px' ? 'none' : '', transition: 'display 0.7s' }}>
-            <MenuAside closeMenu={visibleAside}/>
-          </div>
-        </ContainerMenu>
         <Aside />
         <Content closeMenu={onCloseMenu}>{props.children}</Content>
       </Grid>

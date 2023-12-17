@@ -31,10 +31,10 @@ export const GlobalStyle = createGlobalStyle`
 
 html{
   @media (max-width: 1080px){
-    font-size: 18px;
+    font-size: 14px;
   }
   @media (max-width: 720px){
-    font-size: 14px;
+    font-size: 12px;
   }
 }
 
@@ -277,6 +277,7 @@ input::-webkit-outer-spin-button,
       box-shadow: 0px 2px 4px 0 rgba(0,0,0,0.5);
     }
   }
+  
 
 @media (min-width: 1920px){
   .title-responsive{

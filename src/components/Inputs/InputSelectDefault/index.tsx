@@ -24,6 +24,7 @@ interface InputSelectDefaultProps {
   fontSize?: string;
   control?: any;
   name?: string;
+  disabled?:boolean;
 }
 
 export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
@@ -72,7 +73,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
           defaultValue={props.options[0]}
           render={({ field: { value, onChange, ref } }) => (
             <Select
-              defaultValue={props.options[0]}
+              // defaultValue={props.options[0]}
               id={"input-select" + props.label}
               className={"input font-14-responsive"}
               options={props.options}
@@ -87,13 +88,14 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
               ref={ref}
               value={_.find(props.options, { 'value':value })?_.find(props.options, { 'value':value }):value}
               onChange={(e)=>onChange(e.value)}
+              isDisabled={props.disabled}
             />
           )}
         />
       ) : (
         <Select
           id={"input-select" + props.label}
-          className={"input font-14-responsive"}
+          className={"input font-14-responsive mt-1"}
           options={props.options}
           placeholder={props.placeholder}
           isSearchable={props.isSearchable}
@@ -107,6 +109,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
           )}
           styles={customStyles}
           value={props.value}
+          isDisabled={props.disabled}
           // {...props.valid}
         />
       )}

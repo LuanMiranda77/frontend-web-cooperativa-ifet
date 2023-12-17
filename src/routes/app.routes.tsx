@@ -6,7 +6,6 @@ import {
 import Produto from '../module/estoque/pages/Produto';
 import Configuracao from '../module/config/pages/Configuracao';
 import Usuario from '../module/authenticate/pages/Usuario';
-import FormEstabelecimento from '../module/config/pages/estabelecimento/pages/Form';
 import ListEstabelecimentos from '../module/config/pages/estabelecimento/pages/Listagem';
 import Pdv from '../module/venda/pages/Pdv';
 import { Layout } from "../components/Layout";
@@ -30,7 +29,6 @@ const AppRoutes: React.FC<Props> = ({ setDefaultTheme }) => {
             <Route path="/produto" element={<Produto />} />
             <Route path="/configurar" element={<Configuracao />} />
             <Route path="/usuario" element={<Usuario />} />
-            <Route path="/estabelecimento" element={<FormEstabelecimento showModal={true} tipo={2} closeModal={()=>{}} />} />
             <Route path="/estabelecimentos" element={<ListEstabelecimentos />} />
             <Route path="/venda" element={<Pdv />} />
             <Route path="/financeiro" element={<Dashboard />} />

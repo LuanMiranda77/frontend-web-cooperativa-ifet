@@ -5,58 +5,16 @@ import { persistLocalStorage } from './persistLocalStorage';
 export class UtilsUserLocal{
     
     public static setTokenLogin(user: UserAplicationType){
-        let data = this.encrypt(
-        this.geraStringAleatoria(10)+'&'
-        +user.id+"&"+this.geraStringAleatoria(5)+'&'
-        +user.codigo+'&'+this.geraStringAleatoria(15)+'&'
-        +user.cpf+'&'+this.geraStringAleatoria(20)+'&'
-        +user.nome+'&'+this.geraStringAleatoria(25)+'&'
-        +user.email+'&'+this.geraStringAleatoria(30)+'&'
-        +user.dataCriacao+'&'+this.geraStringAleatoria(35)+'&'
-        +user.dataAtualizacao+'&'+this.geraStringAleatoria(40)+'&'
-        +user.acesso+'&'+this.geraStringAleatoria(45)+'&'
-        +user.password+'&'+this.geraStringAleatoria(50)+'&'
-        +user.celular+'&'+this.geraStringAleatoria(15)+'&'
-        +user.cargo+'&'+this.geraStringAleatoria(20)+'&'
-        +user.roles+'&'+this.geraStringAleatoria(15)+'&'
-        +user.token+'&'+this.geraStringAleatoria(15)+'&'
-        +user.status+"&"+this.geraStringAleatoria(8)+'&'
-        +user.estabelecimento+"&"+this.geraStringAleatoria(8));
-        // persistLocalStorage("@TOKEN_KEY", data, 'set');
-        sessionStorage.setItem("@TOKEN_KEY", JSON.stringify(data));
+        sessionStorage.setItem("@TOKEN_KEY", JSON.stringify(user));
     }
 
-    public static getTokenLogin() : UserAplicationType {
-        let key = sessionStorage.getItem("@TOKEN_KEY");
-        let userLogado = {} as UserAplicationType;
-        if(key != null){
-            const array = this.decrypt(key).split('&');
-            userLogado = {
-                id: Number(array[1]),
-                codigo:Number(array[3]),
-                cpf:array[5],
-                nome: array[7], 
-                email:array[9], 
-                dataCriacao: new Date(array[11]), 
-                dataAtualizacao:  new Date(array[13]), 
-                acesso: new Date(array[15]),
-                password: array[17], 
-                celular:array[19],
-                cargo: array[21]==='A'? Cargo.ADMIN : 
-                array[21]==='C'? Cargo.CAIXA :
-                array[21]==='M'? Cargo.MASTER : 
-                array[21]==='E'? Cargo.ESTOQUISTA :
-                array[21]==='G'? Cargo.GERENTE :
-                Cargo.REVENDA,
-                roles:array[23],
-                token:array[25],
-                status: array[27]==="S"?"S":'N', 
-                estabelecimento:Number(array[29])
-            };
-            return userLogado;
+    public static getTokenLogin() : any {
+        let json = sessionStorage.getItem("@TOKEN_KEY");
+        let userLogado = ''
+        if(json){
+            userLogado = JSON.parse(json);
         }
         return userLogado;
-        
     }
 
     public static logout(){

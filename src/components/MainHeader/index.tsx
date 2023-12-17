@@ -17,6 +17,7 @@ import { Divider } from "../Divider";
 import { InputSelectEstabelecimento } from "../Inputs/InputSelectEstabelecimento";
 import { Container } from "./styles";
 import icon from '../../assets/Logo/icon_white.png'
+import { api } from "../../config/api";
 interface Props {
   //adicionar os props
   alterTheme(): void;
@@ -34,10 +35,17 @@ export const MainHeader: React.FC<Props> = ({ alterTheme, onClickMenu, onClose }
   useEffect(() => {
     let user = UtilsUserLocal.getTokenLogin();
     if(user.cargo === Cargo.MASTER){
-      user.estabelecimento=0;
+      user.setor=0;
     }
     dispatch(load(user));
-  }, [dispatch])
+    api.get(`api/estabelecimento/`).then(resp =>{
+      if(typeof resp.data === 'string'){
+              UtilsUserLocal.logout();
+      }else{
+        dispatch(loadEstabelecimentos(resp.data));
+      }
+    }).catch();
+  }, [])
 
   const onCloseAll = () => {
     onClose();
@@ -70,21 +78,7 @@ export const MainHeader: React.FC<Props> = ({ alterTheme, onClickMenu, onClose }
   return (
     <Container className="" style={{ boxShadow: '0px 15px 10px gray' }} onClick={onCloseAll}>
       <div className="flex text-left" style={{ width: '60%' }}>
-        {/* <button
-          style={{
-            backgroundColor: "transparent",
-            border: 0,
-            fontSize: "25px",
-            color: colors.textLabel,
-            marginRight: '2rem'
-          }}
-          onClick={onClickMenu}
-        >
-          <FaBars />
-        </button> */}
         <img className="w-8 drop-shadow-md mr-5" src={icon} alt="logo"/>
-        <InputSelectEstabelecimento />
-
       </div>
       {/* <h1>MH</h1> */}
       <div className="flex text-rigth">
@@ -93,10 +87,8 @@ export const MainHeader: React.FC<Props> = ({ alterTheme, onClickMenu, onClose }
         <div className="grid mr-3 text-xs" style={{ color: colors.textLabel }}>
           <b>{userAplication.nome}</b>
           <small style={{ marginTop: '-2px', color: colors.warning }} >{
-          userAplication.cargo=== Cargo.REVENDA ? 'REVENDA':
-          userAplication.cargo=== Cargo.ADMIN ? 'ADMINISTRADOR':
-          userAplication.cargo=== Cargo.ESTOQUISTA ? 'ESTOQUISTA':
-          userAplication.cargo=== Cargo.GERENTE ? 'GERENTE':
+          userAplication.cargo=== Cargo.VENDEDOR ? 'VENDEDOR':
+          userAplication.cargo=== Cargo.CAPITADOR ? 'CAPITADOR':
           userAplication.cargo=== Cargo.MASTER ? 'MASTER': 'CAIXA'
           
           }</small>

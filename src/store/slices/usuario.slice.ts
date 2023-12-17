@@ -16,17 +16,17 @@ export const initialState = {
     cargo: null,
     roles: '',
     estabelecimento: null,
-}as UserAplicationType
+}
 
 export const usuarioSlice = createSlice({
     name:'user-aplication',
     initialState: initialState, 
     reducers:{
-        load(state, action: PayloadAction<UserAplicationType>){
+        load(state, action: PayloadAction<any>){
             return state = {...action.payload}
         },
 
-        save(state, action: PayloadAction<UserAplicationType>){
+        save(state, action: PayloadAction<any>){
             state = {...action.payload}
         },
 

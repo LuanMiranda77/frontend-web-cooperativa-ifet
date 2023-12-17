@@ -25,7 +25,7 @@ export class UsuarioService {
           const response = await api.post(this.url+'/login', pEntity).then( resp =>{
               let userLogado = resp.data;
               userLogado.token = token;
-              if(userLogado.cargo != Cargo.MASTER && userLogado.cargo != Cargo.REVENDA){
+              if(userLogado.cargo !== Cargo.MASTER){
                 userLogado.estabelecimento = resp.data.estabelecimento.id;
               }
             //   persistLocalStorage<UserAplicationType>("@user-data", userLogado, 'set');
@@ -91,7 +91,18 @@ export class UsuarioService {
     return response;
  }
 
-  public async getUsuarios(estabelecimento: number){
+  public async getUsuarios(){
+    const response = await api.get(this.url)
+    .then( resp =>{
+        return resp.data;
+    })
+    .catch(error => {
+        console.log(error);
+        return Promise.reject(error.response.data[0]);
+    });
+    return Promise.resolve(response);
+  }
+  public async getUsuariosBySetor(estabelecimento: number){
     const response = await api.get(this.url+`/estabelecimento/${estabelecimento}`)
     .then( resp =>{
         return resp.data;

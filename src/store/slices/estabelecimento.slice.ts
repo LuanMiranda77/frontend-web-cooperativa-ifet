@@ -10,7 +10,7 @@ export const initialState = {
     instEstadual: '',
     instMunicipal: '',
     razao: '',
-    nome:'',
+    name:'',
     cep:'',
     logradouro: '',
     numero: '',

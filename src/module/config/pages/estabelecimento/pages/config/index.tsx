@@ -389,7 +389,7 @@ const ModalConfigModulo: React.FC<ModalProps> = (props) => {
               >
                 Nome:
               </span>
-              {props.estabelecimento?.nome}
+              {props.estabelecimento?.name}
             </label>
           </div>
           <div

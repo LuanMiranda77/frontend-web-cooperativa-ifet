@@ -1,106 +1,36 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { Column } from "devextreme-react/data-grid";
-import _ from "lodash";
-import { useContext, useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { toast } from "react-toastify";
-import { ThemeContext } from "styled-components";
 import {
   ButtonIcon,
   DataGridDefault,
   DialogPopupConfirme,
+  InputDefault,
+  InputMask,
+  ModalDefault,
 } from "../../../../../../components";
-import { EstabelecimentoType } from "../../../../../../domain";
-import { initialState } from "../../../../../../store/slices/estabelecimento.slice";
 import { UtilsConvert } from "../../../../../../utils/utils_convert";
-import { get, setStatus } from "../../../services/SetorService";
 import { TableContainer } from "./styles";
 
 import { BsPencilSquare } from "react-icons/bs";
 import { IoTrashSharp } from "react-icons/io5";
-import { UtilsGeral } from "../../../../../../utils/utils_geral";
-import FormEstabelecimento from "../Form";
-import ModalConfigModulo from "../config";
+import useSetor from "../../../../../../hooks/useSetor";
 
 function ListEstabelecimentos() {
-  const [dataSource, setDataSource] = useState<Array<EstabelecimentoType>>([]);
-  const [estabelecimento, setEstabelecimento] =
-    useState<EstabelecimentoType>(initialState);
-  const { colors, title } = useContext(ThemeContext);
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [showModalModulo, setShowModalModulo] = useState<boolean>(false);
-  const [showPoupAtivo, setShowPopupAtivo] = useState<boolean>(false);
-  const [showPoupInativo, setShowPopupInativo] = useState<boolean>(false);
-
-  useEffect(() => {
-    get()
-      .then((response) => {
-        let lista = [...response];
-        setDataSource(lista);
-      })
-      .catch((error) => {
-        toast.error(error.mensagemUsuario);
-      });
-  }, [estabelecimento]);
-
-  const showPopupConfirmeAction = (
-    estabelecimento: EstabelecimentoType,
-    tipo: number
-  ) => {
-    setEstabelecimento(estabelecimento);
-    tipo === 1 ? setShowPopupAtivo(true) : setShowPopupInativo(true);
-  };
-
-  const onAtive = (estabelecimento: EstabelecimentoType) => {
-    setStatus(estabelecimento.id, "S")
-      .then((response) => {
-        let data = _.map(dataSource, (value) => {
-          if (estabelecimento.id === value.id) {
-            value.status = "S";
-          }
-          return value;
-        });
-        setDataSource(data);
-        setShowPopupAtivo(false);
-        toast.success(UtilsGeral.getEmoji(1) + "Bloqueado com sucesso");
-      })
-      .catch((error) => {
-        setShowPopupAtivo(false);
-        toast.error(UtilsGeral.getEmoji(1) + error.mensagemUsuario);
-      });
-  };
-
-  const onInative = (estabelecimento: EstabelecimentoType) => {
-    setStatus(estabelecimento.id, "N")
-      .then((response) => {
-        let data = _.map(dataSource, (value) => {
-          if (estabelecimento.id === value.id) {
-            value.status = "N";
-          }
-          return value;
-        });
-        setDataSource(data);
-        setShowPopupInativo(false);
-      })
-      .catch((error) => {
-        setShowPopupInativo(false);
-        toast.error(error.mensagemUsuario);
-      });
-  };
-
-  const onNovo = () => {
-    setEstabelecimento({ ...initialState });
-    setShowModal(true);
-  };
-
-  const onEdit = (estabelecimento: EstabelecimentoType) => {
-    setEstabelecimento({ ...estabelecimento });
-    setShowModal(true);
-  };
-
-  const onShowModalModulo = (estabelecimento: EstabelecimentoType) => {
-    setEstabelecimento({ ...estabelecimento });
-    setShowModalModulo(true);
-  };
+  const {
+    colors,
+    dataSource,
+    showModal,
+    setor,
+    showAlert,
+    setAlert,
+    setSetor,
+    onNovo,
+    onEdit,
+    onSave,
+    setShowModal,
+    handelDelete,
+  } = useSetor();
 
   const renderCell = (element: any) => {
     if (element.columnIndex === 1) {
@@ -125,7 +55,7 @@ function ListEstabelecimentos() {
               color={colors.error}
               size={25}
               title="Excluir"
-              onClick={() => onShowModalModulo(element.data)}
+              onClick={() => {setSetor(element.data); setAlert(true)}}
             />
           </i>
         </div>
@@ -170,7 +100,7 @@ function ListEstabelecimentos() {
             sortOrder={"asc"}
           />
           <Column
-            dataField="cnpjCpf"
+            dataField="cnpj"
             caption="CPF/CNPJ"
             alignment="left"
             dataType=""
@@ -178,7 +108,7 @@ function ListEstabelecimentos() {
             cellRender={renderCell}
           />
           <Column
-            dataField="nome"
+            dataField="name"
             caption="NOME"
             alignment="left"
             dataType="string"
@@ -196,47 +126,38 @@ function ListEstabelecimentos() {
         </DataGridDefault>
       </TableContainer>
 
+      <ModalDefault
+        key={"modalEstab"}
+        title={"Ficha Cetores"}
+        isOpen={showModal}
+        onRequestClose={() => setShowModal(false)}
+        onClickAction={onSave}
+      >
+        <InputMask
+          className="mb-5 w-6/12"
+          label={"CNPJ"}
+          mask={"99.999.999/9999-99"}
+          onChange={(e) => setSetor({ ...setor, cnpj: e.target.value })}
+          value={setor.cnpj}
+        />
+        <InputDefault
+          label="Nome"
+          type="text"
+          onChange={(e) => setSetor({ ...setor, name: e.target.value })}
+          value={setor.name}
+        />
+      </ModalDefault>
+
       <DialogPopupConfirme
         title="Confirme"
-        isOpen={showPoupInativo}
-        onRequestClose={() => setShowPopupInativo(false)}
-        onClickSim={() => onInative(estabelecimento)}
+        isOpen={showAlert}
+        onRequestClose={() => setAlert(false)}
+        onClickSim={() => handelDelete(setor.id ? setor.id : 0)}
       >
-        <p className="font-bold text-xl">
-          Tem certeza que deseja bloquear o estabelecimento?{" "}
-        </p>
-        <p className="font-bold text-xs" style={{ color: colors.error }}>
-          Todos os usuários do mesmo não poderão acessar o sistema até ser
-          liberado!
-        </p>
+        <div className="w-full">
+          <p>Tem certeza que quer excluir?</p>
+        </div>
       </DialogPopupConfirme>
-
-      <DialogPopupConfirme
-        title="Confirme"
-        isOpen={showPoupAtivo}
-        onRequestClose={() => setShowPopupAtivo(false)}
-        onClickSim={() => onAtive(estabelecimento)}
-      >
-        <p className="font-bold text-xl">
-          Tem certeza que deseja liberar o estabelecimento?{" "}
-        </p>
-        <p className="font-bold text-xs" style={{ color: colors.error }}>
-          Todos os usuários do mesmo acessarão o sistema normalmente
-        </p>
-      </DialogPopupConfirme>
-
-      <FormEstabelecimento
-        showModal={showModal}
-        closeModal={() => setShowModal(false)}
-        tipo={1}
-        estabelecimento={estabelecimento}
-      />
-
-      <ModalConfigModulo
-        showModal={showModalModulo}
-        closeModal={() => setShowModalModulo(false)}
-        estabelecimento={estabelecimento}
-      />
     </div>
   );
 }

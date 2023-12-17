@@ -61,10 +61,11 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
             color: "#fff",
             paddingLeft: "1rem",
             boxShadow: "2px 2px 2px 1px rgba(0, 0, 0, 0.2)",
+            fontSize:'13px'
           }}
         >
           {props.title}
-          {props.onRequestClose ? (
+          {props.onRequestClose && (
             <IconButton
               aria-label="close"
               onClick={props.onRequestClose}
@@ -73,11 +74,12 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
                 right: 15,
                 top: -6,
                 color: colors.white,
+                fontSize:'15px'
               }}
             >
               x
             </IconButton>
-          ) : null}
+          )}
         </DialogTitle>
         <DialogContent
           dividers
@@ -109,14 +111,14 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
             <ButtonBase
               label={props.textBtnAction ? props.textBtnAction : "Salvar"}
               model="btn_base"
-              className="primary-color mr-5  w-32"
+              className="primary-color mr-5  w-32 font-12"
               size="large"
               onClick={props.onClickAction}
               type="submit"
             />
           ) : (
             <ButtonIcon
-              className="mr-3 w-32"
+              className="mr-3 w-32 font-12"
               label={props.textBtnAction ? props.textBtnAction : "Salvar"}
               icon={<FaSave />}
               type="submit"
