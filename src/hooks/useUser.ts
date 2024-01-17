@@ -8,6 +8,9 @@ import { selectStateUser } from "../store/slices/usuario.slice";
 import { UtilsGeral } from "../utils/utils_geral";
 import { UserAplicationType } from "./../domain/types/user_aplication";
 import { cargos } from "./../module/authenticate/pages/Usuario/__mocks__/index";
+import { FieldValues, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 function useUserAplication() {
   const url = "api/usuario";
@@ -32,6 +35,18 @@ function useUserAplication() {
   const [dataSource, setDataSource] = useState<Array<UserAplicationType>>([]);
   const actualUser = useSelector(selectStateUser);
   const service = new UsuarioService();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   async function handleSave() {
     console.log('aqui');
@@ -78,3 +93,22 @@ function useUserAplication() {
 }
 
 export default useUserAplication;
+
+
+const schema = yup
+.object()
+.shape({
+  name: yup.string().required("O campo é obrigatório"),
+  lastName: yup.string().required("O campo é obrigatório"),
+  email: yup.string().email().required("O campo é obrigatório"),
+  userName: yup.string().required("O campo é obrigatório"),
+  password: yup
+    .string()
+    .min(6, "Digite no minímo 6 caracteres")
+    .required("O campo é obrigatório"),
+  confirmePass: yup
+    .string()
+    .oneOf([yup.ref("password")], "As senhas não são iguais")
+    .required("O campo é obrigatório"),
+})
+.required();

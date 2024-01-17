@@ -42,7 +42,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
       // none of react-select's styles are passed to <Control />
       display: "flex",
       width: "100%",
-      height: props.height ? props.height : 25,
+      height: props.height ? props.height : 28,
       border: 0,
       borderBottom: "1px solid " + theme.colors.gray,
       // borderRadius: '0px 5px 5px 5px',
@@ -59,7 +59,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
       } ${props.className ? props.className : ""}`}
     >
       {props.label && (
-        <label className="input_line__label" htmlFor="">
+        <label className="input_line__label mb-1" htmlFor="">
           {props.label}
           <span className="text-red-500 font-bold">
             {props.required ? " *" : ""}
@@ -70,7 +70,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
         <Controller
           control={props.control}
           name={props.name}
-          defaultValue={props.options[0]}
+          defaultValue={props.defaultValue}
           render={({ field: { value, onChange, ref } }) => (
             <Select
               // defaultValue={props.options[0]}

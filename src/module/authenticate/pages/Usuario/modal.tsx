@@ -1,32 +1,33 @@
-import _ from "lodash";
+import { yupResolver } from "@hookform/resolvers/yup";
 import React, { useContext, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { ThemeContext } from "styled-components";
+import * as yup from "yup";
 import {
-    ButtonIcon,
   InputDefault,
   InputSelectDefault,
   ModalDefault,
 } from "../../../../components";
 import TitleDivider from "../../../../components/TitleDivider";
+import { api } from "../../../../config/api";
 import { UserAplicationType } from "../../../../domain";
+import { selectStateEstabelecimentos } from "../../../../store/slices/estabelecimentos.slice";
+import { UtilsGeral } from "../../../../utils/utils_geral";
 import { cargos } from "./__mocks__";
 import { FormContainer } from "./styles";
-import * as yup from "yup";
-import { FieldValues, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { ThemeContext } from "styled-components";
-import { selectStateEstabelecimentos } from "../../../../store/slices/estabelecimentos.slice";
-import { useSelector } from "react-redux";
-import { FaSave } from "react-icons/fa";
 
 interface Props {
   showModal: boolean;
   closeModal: () => void;
-  user: UserAplicationType;
-  setUser: (user: UserAplicationType) => void;
-  handleSave:()=>void;
+  user: any;
+  setDataSource?: (array: Array<UserAplicationType>) => void;
+  dataSource?: Array<UserAplicationType>;
 }
 
 const ModalUser: React.FC<Props> = ({ ...props }) => {
+  const url = "api/usuario";
 
   const {
     register,
@@ -35,14 +36,48 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
     reset,
     setValue,
     control,
+    getValues,
+    getFieldState,
     formState: { errors },
   } = useForm({
+    // defaultValues:props.user,
     resolver: yupResolver(schema),
   });
 
   const { colors, title } = useContext(ThemeContext);
   const setores = useSelector(selectStateEstabelecimentos);
-  useEffect(()=>{console.log(errors);},[errors]);
+  useEffect(() => {
+    console.log(errors);
+    // console.log(getValues());
+  }, [errors, control]);
+
+  useEffect(() => {
+    console.log(props.user);
+    Object.keys(props.user).forEach((campo) => {
+      
+      setValue(campo, props.user[campo]);
+    });
+  }, [props.user]);
+
+  async function handleSave() {
+    console.log("aqui");
+    let user = getValues();
+    user.status = "S";
+    delete user?.confirmePass;
+    await api
+      .post(url, user)
+      .then((resp) => {
+        props.setDataSource &&
+          props.dataSource &&
+          props.setDataSource([...props.dataSource, resp.data]);
+        props.closeModal();
+        toast.success(UtilsGeral.getEmoji(1) + " Cadastrado com sucesso.");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error(UtilsGeral.getEmoji(2) + error.response.data[0].mensagemUsuario);
+      });
+  }
 
   return (
     <ModalDefault
@@ -50,10 +85,9 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
       title="Ficha do usúario"
       onRequestClose={props.closeModal}
       width="800px"
-      onClickAction={()=>handleSubmit(props.handleSave)}
-      
+      onClickAction={handleSubmit(handleSave)}
     >
-      <FormContainer onSubmit={handleSubmit(props.handleSave)}>
+      <FormContainer>
         <div>
           <TitleDivider title="Principal" />
           <div className="flex flex-wrap my-5">
@@ -62,7 +96,7 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
               label="Nome"
               type="text"
               required
-              name='name'
+              name="name"
               register={register("name")}
               errorMessage={errors.name?.message}
             />
@@ -70,7 +104,7 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
               <InputSelectDefault
                 label="Cargo"
                 options={cargos}
-                name='cargo'
+                name="cargo"
                 // defaultValue={cargos[2]}
                 // value={_.find(cargos, { value: props.user?.cargo })}
                 // onChange={(e) =>
@@ -81,10 +115,11 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
                 required
                 control={control}
                 disabled={Boolean(props.user.id)}
+                errorMessage={errors.cargo?.message}
               />
             </div>
             <InputDefault
-              name='lastName'
+              name="lastName"
               className="w-6/12 mr-2"
               label="Sobrenome"
               type="text"
@@ -92,11 +127,13 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
               register={register("lastName")}
               errorMessage={errors.lastName?.message}
             />
-             <div className="w-4/12">
+            <div className="w-4/12">
               <InputSelectDefault
                 label="Setor"
-                options={setores.map(item => {return {label: item?.name, value:item?.id}})}
-                name='setor'
+                options={setores.map((item) => {
+                  return { label: item?.name, value: item?.id };
+                })}
+                name="setor"
                 // defaultValue={cargos[2]}
                 // value={_.find(cargos, { value: props.user?.cargo })}
                 // onChange={(e) =>
@@ -107,6 +144,7 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
                 required
                 control={control}
                 disabled={Boolean(props.user.id)}
+                errorMessage={errors.setor?.message}
               />
             </div>
           </div>
@@ -117,7 +155,7 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
           <div className="my-5 flex flex-wrap">
             <InputDefault
               className="w-5/12 mb-5"
-              label="Email"
+              label="E-mail"
               type="email"
               required
               register={register("email")}
@@ -155,9 +193,7 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
             className="rounded-full w-28 h-10 text-center p-2 font-bold text-white absolute top-16"
             style={{
               backgroundColor:
-                props.user.status === "S"
-                  ? colors.success
-                  : colors.error,
+                props.user.status === "S" ? colors.success : colors.error,
               left: "calc(100% - 130px)",
             }}
           >
@@ -166,34 +202,36 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
         ) : (
           ""
         )}
-        <ButtonIcon
+        {/* <ButtonIcon
               className="mr-3 w-32 font-12"
               label={"Salvar"}
               icon={<FaSave />}
               type="submit"
               background={colors.primary}
-            />
+            /> */}
       </FormContainer>
     </ModalDefault>
   );
 };
 
 const schema = yup
-.object()
-.shape({
-  name: yup.string().required("O campo é obrigatório"),
-  lastName: yup.string().required("O campo é obrigatório"),
-  email: yup.string().email().required("O campo é obrigatório"),
-  userName: yup.string().email().required("O campo é obrigatório"),
-  password: yup
-    .string()
-    .min(6, "Digite no minímo 6 caracteres")
-    .required("O campo é obrigatório"),
-  confirmePass: yup
-    .string()
-    .oneOf([yup.ref("password")], "As senhas não são iguais")
-    .required("O campo é obrigatório"),
-})
-.required();
+  .object()
+  .shape({
+    name: yup.string().required("O campo é obrigatório"),
+    cargo: yup.string().required("O campo é obrigatório"),
+    setor: yup.string().required("O campo é obrigatório"),
+    lastName: yup.string().required("O campo é obrigatório"),
+    email: yup.string().email("E-mail inválido").required("O campo é obrigatório"),
+    userName: yup.string().required("O campo é obrigatório"),
+    password: yup
+      .string()
+      .min(6, "Digite no minímo 6 caracteres")
+      .required("O campo é obrigatório"),
+    confirmePass: yup
+      .string()
+      .oneOf([yup.ref("password")], "As senhas não são iguais")
+      .required("O campo é obrigatório"),
+  })
+  .required();
 
 export default ModalUser;

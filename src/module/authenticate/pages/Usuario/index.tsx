@@ -1,10 +1,10 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import { Column, IColumnProps } from "devextreme-react/data-grid";
 import moment from "moment";
-import { FieldValues, useForm } from "react-hook-form";
-import { FaPlus } from "react-icons/fa";
+import { FieldValues } from "react-hook-form";
+import { BsPencilSquare } from "react-icons/bs";
+import { FaPlus, FaRegCheckCircle } from "react-icons/fa";
+import { MdBlock } from "react-icons/md";
 import { useSelector } from "react-redux";
-import * as yup from "yup";
 import { ButtonIcon, DataGridDefault } from "../../../../components";
 import { Cargo } from "../../../../domain/enums";
 import useUserAplication from "../../../../hooks/useUser";
@@ -25,36 +25,10 @@ function Usuario() {
     user,
     setUser,
     dataSource,
+    setDataSource,
     initialState,
     actualUser,
   } = useUserAplication();
-
-  const schema = yup
-    .object()
-    .shape({
-      name: yup.string().required("O campo é obrigatório"),
-      email: yup.string().email().required("O campo é obrigatório"),
-      password: yup
-        .string()
-        .min(6, "Digite no minímo 6 caracteres")
-        .required("O campo é obrigatório"),
-      confirmePass: yup
-        .string()
-        .oneOf([yup.ref("password")], "As senhas não são iguais")
-        .required("O campo é obrigatório"),
-    })
-    .required();
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
 
   // useEffect(() => {
   //   if (userAplication.cargo !== Cargo.MASTER) {
@@ -97,13 +71,24 @@ function Usuario() {
         cargo = "MASTER";
       } else if (element.value === Cargo.VENDEDOR) {
         cargo = "Vendedor";
-      } else{
+      } else {
         cargo = "Capitador";
       }
       return (
         <span className="font-bold" style={{ color: colors.info }}>
           {cargo}
         </span>
+      );
+    } else if (element.columnIndex === 5) {
+      return (
+        <div className="flex text-lg justify-between px-3">
+          {element.data.status === "S" ? (
+            <FaRegCheckCircle className="cursor-pointer" title="Usuário ativo" color={colors.info} />
+          ) : (
+            <MdBlock className="cursor-pointer" title="Usuário inativo" color={colors.error} />
+          )}
+          <BsPencilSquare title="Editar" className="cursor-pointer" color={colors.primary} onClick={()=>{setUser(element.data); setShowModal(true)}} />
+        </div>
       );
     }
   };
@@ -241,7 +226,7 @@ function Usuario() {
             allowSearch={false}
             cellRender={formatDate}
           />
-          <Column
+          {/* <Column
             dataField="status"
             caption="STATUS"
             alignment="center"
@@ -249,7 +234,7 @@ function Usuario() {
             width={100}
             cellRender={renderCell}
             allowSearch={false}
-          />
+          /> */}
           <Column
             dataField=""
             caption=""
@@ -266,9 +251,9 @@ function Usuario() {
       <ModalUser
         showModal={showModal}
         closeModal={closeModal}
-        handleSave={handleSave}
-        setUser={setUser}
         user={user}
+        dataSource={dataSource}
+        setDataSource={setDataSource}
       />
     </Container>
   );
