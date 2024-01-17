@@ -8,7 +8,7 @@ export enum RegimeTributario {
 }
 
 export enum Cargo {
-    MASTER ="M", VENDEDOR ="V", CAPITADOR="C"
+    MASTER ="MASTER", VENDEDOR ="VENDEDOR", CAPITADOR="CAPITADOR"
 }
 
 export enum Roles{

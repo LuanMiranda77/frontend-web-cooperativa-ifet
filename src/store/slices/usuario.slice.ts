@@ -4,17 +4,19 @@ import { RootState } from '../index.store';
 
 export const initialState = {
     codigo:0,
-    nome: '',
+    name: '',
     cpf:'',
     email: '',
-    dataCriacao: null ,
-    dataAtualizacao: null ,
+    dateCreate: null ,
+    dateUpdate: null ,
+    lastName:'',
     acesso: null,
     status: 'S',
     password:'',
     celular: '',
     cargo: null,
     roles: '',
+    userName:'',
     estabelecimento: null,
 }
 

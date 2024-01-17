@@ -24,42 +24,42 @@ export function Aside() {
       }}
     >
       <MenuContainer>
-        {["M","C","E"].indexOf(userAplication.cargo) !== -1 && (
+        {["MASTER","VENDEDOR"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/venda"
             icon={<FaCartArrowDown className="btn-menu" />}
             label="Venda"
           />
         )}
-        {["M","C","E"].indexOf(userAplication.cargo) !== -1 &&(
+        {["MASTER","VENDEDOR","CAPITADOR"].indexOf(userAplication.cargo) !== -1 &&(
           <ButtonMenu
             link="/produto"
             icon={<FaShopify className="btn-menu" />}
             label="Estoque"
           />
         )}
-        {["M","G"].indexOf(userAplication.cargo) !== -1 && (
+        {["MASTER"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/financeiro"
             icon={<FaSpeakap className="btn-menu" />}
             label="Financeiro"
           />
         )}
-        {["M","G","E"].indexOf(userAplication.cargo) !== -1 && (
+        {["MASTER","VENDEDOR","CAPITADOR"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/mde"
             icon={<FaSpeakap className="btn-menu" />}
             label="Processos"
           />
         )}
-        {["M"].indexOf(userAplication.cargo) !== -1 &&(
+        {["MASTER"].indexOf(userAplication.cargo) !== -1 &&(
           <ButtonMenu
             link="/estabelecimentos"
             icon={<FaStoreAlt className="btn-menu" />}
             label="Setores"
           />
         )}
-        {["M","G"].indexOf(userAplication.cargo) !== -1 && (
+        {["MASTER"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/usuario"
             icon={<FaUserFriends className="btn-menu" />}

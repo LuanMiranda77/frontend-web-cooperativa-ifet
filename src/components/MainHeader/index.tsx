@@ -85,7 +85,7 @@ export const MainHeader: React.FC<Props> = ({ alterTheme, onClickMenu, onClose }
         {/* <button onClick={alterTheme}>SetTema</button> */}
         {/* <FaUser onClick={alterTheme} className="text-xl mr-2" style={{ color: colors.textLabel }}/> */}
         <div className="grid mr-3 text-xs" style={{ color: colors.textLabel }}>
-          <b>{userAplication.nome}</b>
+          <b>{userAplication.name}</b>
           <small style={{ marginTop: '-2px', color: colors.warning }} >{
           userAplication.cargo=== Cargo.VENDEDOR ? 'VENDEDOR':
           userAplication.cargo=== Cargo.CAPITADOR ? 'CAPITADOR':

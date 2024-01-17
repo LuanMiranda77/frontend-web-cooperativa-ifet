@@ -5,11 +5,11 @@ import { persistLocalStorage } from './persistLocalStorage';
 export class UtilsUserLocal{
     
     public static setTokenLogin(user: UserAplicationType){
-        sessionStorage.setItem("@TOKEN_KEY", JSON.stringify(user));
+        sessionStorage.setItem("@user-data", JSON.stringify(user));
     }
 
     public static getTokenLogin() : any {
-        let json = sessionStorage.getItem("@TOKEN_KEY");
+        let json = sessionStorage.getItem("@user-data");
         let userLogado = ''
         if(json){
             userLogado = JSON.parse(json);
@@ -20,7 +20,7 @@ export class UtilsUserLocal{
     public static logout(){
         // persistLocalStorage("@user-data", '', 'remove');
         // persistLocalStorage("@TOKEN_KEY", '', 'remove');
-        sessionStorage.removeItem("@TOKEN_KEY");
+        sessionStorage.removeItem("@user-data");
     }
 
     private static  encrypt(dados: string){
