@@ -18,6 +18,7 @@ export const initialState = {
     roles: '',
     userName:'',
     estabelecimento: null,
+    // isOpenModal:false
 }
 
 export const usuarioSlice = createSlice({
@@ -28,16 +29,16 @@ export const usuarioSlice = createSlice({
             return state = {...action.payload}
         },
 
-        save(state, action: PayloadAction<any>){
-            state = {...action.payload}
+        saveUser(state, action: PayloadAction<any>){
+            return state = {...action.payload}
         },
 
         reset(state){
-            state = {...initialState};
+            return state = {...initialState};
         },
 
     }
 });
-export const {save, load,  reset } = usuarioSlice.actions;
+export const {saveUser, load,  reset } = usuarioSlice.actions;
 export const selectStateUser = (state: RootState) => state.userAplication;
 export default usuarioSlice.reducer;

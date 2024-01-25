@@ -14,9 +14,11 @@ import TitleDivider from "../../../../components/TitleDivider";
 import { api } from "../../../../config/api";
 import { UserAplicationType } from "../../../../domain";
 import { selectStateEstabelecimentos } from "../../../../store/slices/estabelecimentos.slice";
+import { selectStateUser } from "../../../../store/slices/usuario.slice";
 import { UtilsGeral } from "../../../../utils/utils_geral";
 import { cargos } from "./__mocks__";
 import { FormContainer } from "./styles";
+import { Cargo } from "../../../../domain/enums";
 
 interface Props {
   showModal: boolean;
@@ -46,16 +48,19 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
 
   const { colors, title } = useContext(ThemeContext);
   const setores = useSelector(selectStateEstabelecimentos);
-  useEffect(() => {
-    console.log(errors);
-    // console.log(getValues());
-  }, [errors, control]);
+  const userAplication = useSelector(selectStateUser);
+  const isUserMaster = userAplication.cargo === Cargo.MASTER;
 
   useEffect(() => {
-    console.log(props.user);
     Object.keys(props.user).forEach((campo) => {
-      
-      setValue(campo, props.user[campo]);
+      if (campo == "setor") {
+        setValue(campo, props.user[campo]?.id);
+      } else if (campo === "password") {
+        setValue("password", props.user["password"]);
+        setValue("confirmePass", props.user["password"]);
+      } else {
+        setValue(campo, props.user[campo]);
+      }
     });
   }, [props.user]);
 
@@ -64,6 +69,9 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
     let user = getValues();
     user.status = "S";
     delete user?.confirmePass;
+    delete user?.token;
+    delete user?.dateCreate;
+    delete user?.token;
     await api
       .post(url, user)
       .then((resp) => {
@@ -75,7 +83,9 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
       })
       .catch((error) => {
         console.log(error);
-        toast.error(UtilsGeral.getEmoji(2) + error.response.data[0].mensagemUsuario);
+        toast.error(
+          UtilsGeral.getEmoji(2) + error.response.data[0].mensagemUsuario
+        );
       });
   }
 
@@ -105,16 +115,11 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
                 label="Cargo"
                 options={cargos}
                 name="cargo"
-                // defaultValue={cargos[2]}
-                // value={_.find(cargos, { value: props.user?.cargo })}
-                // onChange={(e) =>
-                //   props.setUser({ ...props.user, cargo: e.value })
-                // }
                 isSearchable={false}
                 placeholder="Selecione..."
                 required
                 control={control}
-                disabled={Boolean(props.user.id)}
+                disabled={isUserMaster ? false:Boolean(props.user.id)}
                 errorMessage={errors.cargo?.message}
               />
             </div>
@@ -134,16 +139,11 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
                   return { label: item?.name, value: item?.id };
                 })}
                 name="setor"
-                // defaultValue={cargos[2]}
-                // value={_.find(cargos, { value: props.user?.cargo })}
-                // onChange={(e) =>
-                //   props.setUser({ ...props.user, cargo: e.value })
-                // }
                 isSearchable={false}
                 placeholder="Selecione..."
                 required
                 control={control}
-                disabled={Boolean(props.user.id)}
+                disabled={isUserMaster ? false:Boolean(props.user.id)}
                 errorMessage={errors.setor?.message}
               />
             </div>
@@ -188,9 +188,9 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
           </div>
         </div>
 
-        {props.user.id ? (
+        {props.user.id && (
           <div
-            className="rounded-full w-28 h-10 text-center p-2 font-bold text-white absolute top-16"
+            className="rounded-full mt-5 w-28 h-10 text-center p-2 font-bold text-white absolute top-16"
             style={{
               backgroundColor:
                 props.user.status === "S" ? colors.success : colors.error,
@@ -199,8 +199,6 @@ const ModalUser: React.FC<Props> = ({ ...props }) => {
           >
             <p>{props.user.status === "S" ? "ATIVO" : "INATIVO"}</p>
           </div>
-        ) : (
-          ""
         )}
         {/* <ButtonIcon
               className="mr-3 w-32 font-12"
@@ -221,7 +219,10 @@ const schema = yup
     cargo: yup.string().required("O campo é obrigatório"),
     setor: yup.string().required("O campo é obrigatório"),
     lastName: yup.string().required("O campo é obrigatório"),
-    email: yup.string().email("E-mail inválido").required("O campo é obrigatório"),
+    email: yup
+      .string()
+      .email("E-mail inválido")
+      .required("O campo é obrigatório"),
     userName: yup.string().required("O campo é obrigatório"),
     password: yup
       .string()

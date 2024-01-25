@@ -1,24 +1,29 @@
 import { Column, IColumnProps } from "devextreme-react/data-grid";
 import moment from "moment";
-import { FieldValues } from "react-hook-form";
 import { BsPencilSquare } from "react-icons/bs";
 import { FaPlus, FaRegCheckCircle } from "react-icons/fa";
 import { MdBlock } from "react-icons/md";
-import { useSelector } from "react-redux";
-import { ButtonIcon, DataGridDefault } from "../../../../components";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  ButtonIcon,
+  DataGridDefault,
+  DialogPopupConfirme,
+} from "../../../../components";
 import { Cargo } from "../../../../domain/enums";
 import useUserAplication from "../../../../hooks/useUser";
 import { selectStateEstab } from "../../../../store/slices/estabelecimento.slice";
-import { selectStateUser } from "../../../../store/slices/usuario.slice";
+import {
+  selectStateUser
+} from "../../../../store/slices/usuario.slice";
 import ModalUser from "./modal";
 import { Container, TableContainer } from "./styles";
 
 function Usuario() {
   const userAplication = useSelector(selectStateUser);
   const estabelecimento = useSelector(selectStateEstab);
+  const dispatch = useDispatch();
   const {
     colors,
-    handleSave,
     setShowModal,
     showModal,
     title,
@@ -28,25 +33,21 @@ function Usuario() {
     setDataSource,
     initialState,
     actualUser,
+    setStatus,
+    showConfirmed,
+    setShowConfirmed,
+    userSelect, setUserSelect
   } = useUserAplication();
 
-  // useEffect(() => {
-  //   if (userAplication.cargo !== Cargo.MASTER) {
-  //     let lista = cargos.filter(cargo => cargo.value !== Cargo.MASTER)
-  //     setListCargos(lista);
-  //   }
-  //   if (estabelecimento.id) {
-  //     console.log(estabelecimento);
-  //     service.getUsuarios(estabelecimento.id).then(response => {
-  //       setDataSource(response);
-  //       setDataSourceCopy(response);
-  //     }).catch(error => {
-  //       toast.error(error.mensagemUsuario);
-  //     });
-  //   }
-  // }, [estabelecimento]);
-
   const renderCell = (element: any) => {
+    console.log(element);
+    if (element.columnIndex === 1) {
+      return (
+        <span>{`${element.value} ${
+          Boolean(element.data.lastName) ? element.data.lastName : ""
+        }`}</span>
+      );
+    }
     if (element.value === "S") {
       return (
         <div
@@ -83,11 +84,29 @@ function Usuario() {
       return (
         <div className="flex text-lg justify-between px-3">
           {element.data.status === "S" ? (
-            <FaRegCheckCircle className="cursor-pointer" title="Usuário ativo" color={colors.info} />
+            <FaRegCheckCircle
+              className="cursor-pointer"
+              title="Usuário ativo"
+              color={colors.info}
+              onClick={() => {setShowConfirmed(true);setUserSelect(element.data)}}
+            />
           ) : (
-            <MdBlock className="cursor-pointer" title="Usuário inativo" color={colors.error} />
+            <MdBlock
+              className="cursor-pointer"
+              title="Usuário inativo"
+              color={colors.error}
+              onClick={() => {setShowConfirmed(true);setUserSelect(element.data)}}
+            />
           )}
-          <BsPencilSquare title="Editar" className="cursor-pointer" color={colors.primary} onClick={()=>{setUser(element.data); setShowModal(true)}} />
+          <BsPencilSquare
+            title="Editar"
+            className="cursor-pointer"
+            color={colors.primary}
+            onClick={() => {
+              setUser(element.data);
+              openModal();
+            }}
+          />
         </div>
       );
     }
@@ -99,47 +118,8 @@ function Usuario() {
     setShowModal(false);
   };
 
-  const onSave = (form: FieldValues) => {
-    // if (user.cargo == null) {
-    //   toast.error(UtilsGeral.getEmoji(2)+ 'Você esqueceu de selecionar o cargo.');
-    //   return
-    // }
-    // let userData = user;
-    // userData = {
-    //   ...user,
-    //   nome: form.nome,
-    //   email: form.email,
-    //   password: form.password,
-    //   estabelecimento: user.cargo !== Cargo.MASTER && user.cargo !== Cargo.REVENDA ? estabelecimento.id : 1
-    // }
-    //   if (!userData.id) {
-    //     service.save(userData).then(response => {
-    //       let array = [...dataSource];
-    //       array.push(response);
-    //       setDataSource(array);
-    //       setShowModal(false);
-    //       toast.success(UtilsGeral.getEmoji(1) + " Cadastrado com sucesso.");
-    //     }).catch(error => {
-    //       toast.error(UtilsGeral.getEmoji(2)+ error.mensagemUsuario);
-    //     });
-    //   } else {
-    //     userData.dataCriacao = moment(userData.dataCriacao).toDate();
-    //     userData.dataAtualizacao = moment(userData.dataAtualizacao).toDate();
-    //     service.update(userData).then(response => {
-    //       console.log(response);
-    //       let array = _.map(dataSource, (user) => {
-    //         if (user.id === response.id) {
-    //           user = { ...response }
-    //         }
-    //         return user;
-    //       });
-    //       setDataSource(array);
-    //       setShowModal(false);
-    //       toast.success(UtilsGeral.getEmoji(1) + " Atualizado com sucesso.");
-    //     }).catch(error => {
-    //       toast.error(UtilsGeral.getEmoji(2) + error.mensagemUsuario);
-    //     });
-    //   }
+  const openModal = () => {
+    setShowModal(true);
   };
 
   const formatDate = (date: any) => {
@@ -169,7 +149,8 @@ function Usuario() {
                 width={"100%"}
                 onClick={() => {
                   setUser(initialState);
-                  setShowModal(true);
+                  // setShowModal(true);
+                  openModal();
                 }}
               />
             </div>
@@ -200,6 +181,7 @@ function Usuario() {
             alignment="left"
             dataType="string"
             cssClass="font-bold"
+            cellRender={renderCell}
           />
           <Column
             dataField="cargo"
@@ -255,6 +237,18 @@ function Usuario() {
         dataSource={dataSource}
         setDataSource={setDataSource}
       />
+
+      <DialogPopupConfirme
+        isOpen={showConfirmed}
+        onRequestClose={() => setShowConfirmed(false)}
+        title="Confirme"
+        onClickSim={()=>setStatus(userSelect)}
+      >
+        <div>
+          <p className="font-bold text-xl">{`Realmente deseja ${userSelect.status == 'S'?'bloquear':'desbloquear'} o usuário?`}</p>
+          <p className="text-xl">Nome: {userSelect.name +' '+userSelect.lastName}</p>
+        </div>
+      </DialogPopupConfirme>
     </Container>
   );
 }

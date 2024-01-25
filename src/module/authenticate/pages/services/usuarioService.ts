@@ -32,12 +32,10 @@ export class UsuarioService {
             let userLogado = resp.data;
             userLogado.token = token;
             
-            console.log(userLogado);
             if (userLogado.cargo !== Cargo.MASTER) {
                 userLogado.estabelecimento = resp.data.estabelecimento.id;
             }
             //   persistLocalStorage<UserAplicationType>("@user-data", userLogado, 'set');
-            console.log(userLogado);
             // UtilsUserLocal.setTokenLogin(userLogado);
             sessionStorage.setItem("@user-data", JSON.stringify(userLogado));
             // delToken();
