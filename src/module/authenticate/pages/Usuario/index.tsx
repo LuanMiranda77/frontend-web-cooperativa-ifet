@@ -135,7 +135,7 @@ function Usuario() {
   };
 
   return (
-    <Container className="card-local p-3">
+    <Container className="card-local p-2">
       <TableContainer>
         <DataGridDefault
           isSearch

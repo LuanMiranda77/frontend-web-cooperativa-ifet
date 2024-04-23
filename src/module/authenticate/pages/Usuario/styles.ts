@@ -25,7 +25,7 @@ export const FormContainer  = styled.form`
 export const TableContainer  = styled.div`
 
     //adicionar stylos
-    height: calc(100vh - 135px);
+    height: calc(100vh - 140px);
 
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo

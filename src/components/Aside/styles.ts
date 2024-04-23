@@ -6,7 +6,7 @@ export const Container  = styled.div`
     background-color:${props => props.theme.colors.tertiary};
     border-right: 1px solid ${props => props.theme.colors.gray};
     transition: grid-template-columns 0.9ms;
-    /* height: calc(100vh - 55px); */
+    height: calc(100vh - 50px);
 
 @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo

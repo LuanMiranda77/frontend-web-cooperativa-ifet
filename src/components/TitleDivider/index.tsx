@@ -3,12 +3,13 @@ import { ThemeContext } from "styled-components";
 import { Divider } from "../Divider";
 interface Props {
   title: string;
+  className?:string;
 }
 
 const TitleDivider: React.FC<Props> = (props) => {
   const { colors, title } = useContext(ThemeContext);
   return (
-    <div>
+    <div className={props.className}>
       <p
         className="font-bold text-xs"
         style={{

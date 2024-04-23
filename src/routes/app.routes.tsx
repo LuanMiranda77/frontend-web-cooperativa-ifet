@@ -12,6 +12,7 @@ import { Layout } from "../components/Layout";
 import Dashboard from "../module/financeiro/pages/Dashboard";
 import { Notfound } from "../module/Notfound";
 import { EmConstrucao } from "../module/telaConstrucao";
+import Process from "../module/Process";
 
 interface Props {
   setDefaultTheme(): void;
@@ -27,6 +28,7 @@ const AppRoutes: React.FC<Props> = ({ setDefaultTheme }) => {
             <Route path="/" />
             {/* nossas rotas */}
             <Route path="/produto" element={<Produto />} />
+            <Route path="/process" element={<Process />} />
             <Route path="/configurar" element={<Configuracao />} />
             <Route path="/usuario" element={<Usuario />} />
             <Route path="/estabelecimentos" element={<ListEstabelecimentos />} />
