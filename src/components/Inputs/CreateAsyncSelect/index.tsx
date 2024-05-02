@@ -1,12 +1,11 @@
 import React, { useContext } from "react";
 import { Controller } from "react-hook-form";
-import Select from "react-select";
+import CreatableSelect from 'react-select/creatable';
 import { ThemeContext } from "styled-components";
 import { Container } from "./styles";
-import _ from "lodash";
-interface InputSelectDefaultProps {
+
+interface Props {
   //adicionar os props
-  options: Array<Object>;
   label?: string;
   placeholder?: string;
   isClearable?: boolean;
@@ -17,6 +16,7 @@ interface InputSelectDefaultProps {
   value?: any;
   onKeyDownCapture?: (e: any) => void;
   onChange?: (e: any) => void;
+  onChangeCreate?: (e: any) => void;
   required?: boolean;
   valid?: any;
   errorMessage?: any;
@@ -24,12 +24,11 @@ interface InputSelectDefaultProps {
   fontSize?: string;
   control?: any;
   name?: string;
-  disabled?:boolean;
+  disabled?: boolean;
+  loadOptions: any;
 }
 
-export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
-  props
-) => {
+export const CreateAsyncSelect: React.FC<Props> = (props) => {
   const theme = useContext(ThemeContext);
   const customStyles = {
     option: (provided: any, state: any) => ({
@@ -59,12 +58,12 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
       } ${props.className ? props.className : ""}`}
     >
       {props.label && (
-        <span className="input_line__label mb-1">
+        <label className="input_line__label" htmlFor="">
           {props.label}
           <span className="text-red-500 font-bold">
             {props.required ? " *" : ""}
           </span>
-        </span>
+        </label>
       )}
       {props.control && props.name ? (
         <Controller
@@ -72,45 +71,55 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
           name={props.name}
           defaultValue={props.defaultValue}
           render={({ field: { value, onChange, ref } }) => (
-            <Select
-              // defaultValue={props.options[0]}
+            <CreatableSelect
               id={"input-select" + props.label}
-              className={"input font-14-responsive"}
-              options={props.options}
+              className={"input font-14-responsive mt-1"}
+              options={props.loadOptions}
               placeholder={props.placeholder}
               isSearchable={props.isSearchable}
               isClearable={props.isClearable}
+              defaultValue={props.defaultValue}
               autoFocus={props.autoFocus}
-              noOptionsMessage={(obj: { inputValue: string }) => (
-                <p>Não existe items</p>
-              )}
+              onKeyDown={props.onKeyDownCapture}
+              onCreateOption={props.onChangeCreate}
+              noOptionsMessage={(obj: { inputValue: string }) =>
+                obj.inputValue.length < 3
+                  ? "Digite 3 caracteres para pesquisar"
+                  : "Item não existe"
+              }
+              loadingMessage={() => "Carregando..."}
               styles={customStyles}
-              ref={ref}
-              value={_.find(props.options, { 'value':value })?_.find(props.options, { 'value':value }):value}
-              onChange={(e)=>onChange(e.value)}
+              onChange={onChange}
+              value={props.value}
               isDisabled={props.disabled}
+              ref={ref}
+              formatCreateLabel={userInput => `Criar novo: ${userInput}`}
             />
           )}
         />
       ) : (
-        <Select
+        <CreatableSelect
           id={"input-select" + props.label}
-          className={"input font-14-responsive mt-1"}
-          options={props.options}
+          className={"input font-14-responsive"}
+          options={props.loadOptions}
           placeholder={props.placeholder}
           isSearchable={props.isSearchable}
           isClearable={props.isClearable}
           defaultValue={props.defaultValue}
           autoFocus={props.autoFocus}
+          onCreateOption={props.onChangeCreate}
           onKeyDown={props.onKeyDownCapture}
           onChange={props.onChange}
-          noOptionsMessage={(obj: { inputValue: string }) => (
-            <p>Não existe items</p>
-          )}
+          noOptionsMessage={(obj: { inputValue: string }) =>
+            obj.inputValue.length < 3
+              ? "Digite 3 caracteres para pesquisar"
+              : "Item não existe"
+          }
+          loadingMessage={() => "Carregando..."}
           styles={customStyles}
           value={props.value}
           isDisabled={props.disabled}
-          // {...props.valid}
+          formatCreateLabel={userInput => `Criar novo: ${userInput}`}
         />
       )}
       <small className="text-red-500 absolute top-12 text-xs left-1 font-bold">

@@ -12,6 +12,12 @@ interface Props {
 const ListProductConf: React.FC<Props> = (props) => {
   const { title, colors } = useContext(ThemeContext);
 
+  function removeProductDerivado(index: number) {
+    const p = [...props.products];
+    p.splice(index, 1);
+    props.setProducts([...p]);
+  }
+
   return (
     <div
       style={{
@@ -19,11 +25,8 @@ const ListProductConf: React.FC<Props> = (props) => {
         overflowY: "auto",
       }}
     >
-      {props.products.map((e) => (
-        <div
-          className="w-100 h-16 my-2 rounded-xl flex items-center px-4"
-          style={{ background: colors.gray }}
-        >
+      {props.products.map((e, i) => (
+        <div className="w-100 h-16 my-2 rounded-xl flex items-center px-4" style={{ background: colors.gray }}>
           <div className="font-bold w-8/12">
             <p>Nome</p>
             <span>{e.name}</span>
@@ -39,23 +42,16 @@ const ListProductConf: React.FC<Props> = (props) => {
           <div className="flex items-center justify-between text-center font-bold w-16">
             {props.type == "pd" ? (
               <>
-                <FaPen
-                  className="cursor-pointer"
-                  title="Editar item"
-                  color={colors.info}
-                />
+                <FaPen className="cursor-pointer" title="Editar item" color={colors.info} />
                 <FaTrashAlt
                   className="cursor-pointer"
                   title="Apagar item"
                   color={colors.error}
+                  onClick={() => removeProductDerivado(i)}
                 />
-              </> 
+              </>
             ) : (
-              <FaFileSignature
-                title="Adicionar descrepancias"
-                className="cursor-pointer"
-                color={colors.info}
-              />
+              <FaFileSignature title="Adicionar descrepancias" className="cursor-pointer" color={colors.info} />
             )}
           </div>
         </div>

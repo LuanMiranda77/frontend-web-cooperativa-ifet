@@ -98,7 +98,7 @@ export class UtilsConvert {
   static convertProdutoXmlToProduto(produtoXml: ProdutoXml): ProdutoType {
     let produto: ProdutoType = produtoinitial;
     produto.ean = produtoXml.ean;
-    produto.nome = produtoXml.nome;
+    produto.name = produtoXml.nome;
     produto.unid = produtoXml.uniCom;
     produto.precoCusto = produtoXml.valorUnit;
     produto.fatorConversao = 1;

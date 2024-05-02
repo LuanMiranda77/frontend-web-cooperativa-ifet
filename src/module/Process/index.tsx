@@ -30,6 +30,12 @@ const Process: React.FC = () => {
     setShowModal,
     loadFeedstockName,
     loadProductName,
+    addProductDerivado,
+    optionsFeed, 
+    setOptionsFeed,
+    optionsProducts, 
+    setOptionsProducts,
+    saveProcess,
   } = UseProcess();
 
   const renderCell = (element: any) => {
@@ -186,6 +192,8 @@ const Process: React.FC = () => {
         isOpen={showModal}
         onRequestClose={() => setShowModal(false)}
         feedstock={feedstock}
+        process={process}
+        setProcess={setProcess}
         product={product}
         products={products}
         setFeedstock={setFeedstock}
@@ -193,6 +201,12 @@ const Process: React.FC = () => {
         setProducts={setProducts}
         loadFeedstockName={loadFeedstockName}
         loadProductName={loadProductName}
+        addProductDerivado={addProductDerivado}
+        optionsFeed={optionsFeed}
+        setOptionsFeed={setOptionsFeed}
+        optionsProducts={optionsProducts}
+        setOptionsProducts={setOptionsProducts}
+        saveProcess={saveProcess}
       />
     </>
   );

@@ -8,14 +8,16 @@ import { styled } from "@mui/material/styles";
 
 import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { ThemeContext } from "styled-components";
-import { ButtonBase, InputDefault, InputNumber, InputSelectDefault } from "../../../components";
-import { InputAsyncSelect } from "../../../components/Inputs/InputAsyncSelect";
+import { ButtonBase, InputNumber, InputSelectDefault } from "../../../components";
+import { CreateAsyncSelect } from "../../../components/Inputs/CreateAsyncSelect";
 import TabContent from "../../../components/TabContent";
 import TitleDivider from "../../../components/TitleDivider";
 import { unidadeMedidas } from "../../../constants/constMedidas";
-import { FeedstockType } from "../../../domain/types/feedstock";
-import { ProductType } from "../../../domain/types/productType";
+import { FeedstockType, initialFeedstock } from "../../../domain/types/feedstock";
+import { ProcessType } from "../../../domain/types/processType";
+import { ProductType, initialProduct } from "../../../domain/types/productType";
 import { selectStateEstabelecimentos } from "../../../store/slices/estabelecimentos.slice";
 import { UtilsConvert } from "../../../utils/utils_convert";
 import ListProductConf from "./lista";
@@ -32,12 +34,47 @@ interface Props {
   setProducts: Function;
   loadFeedstockName: any;
   loadProductName: Function;
+  addProductDerivado: Function;
+  optionsFeed: Array<any>;
+  optionsProducts: Array<any>;
+  setOptionsFeed: Function;
+  setOptionsProducts: Function;
+  saveProcess: Function;
+  process: ProcessType;
+  setProcess: Function;
 }
 const ModalProcess: React.FC<Props> = (props) => {
   const steps = ["Materia prima", "Produtos derivado", "Conferência"];
   const [activeStep, setActiveStep] = useState(0);
   const { title, colors } = useContext(ThemeContext);
   const setores = useSelector(selectStateEstabelecimentos);
+
+  const alterStep = (type: number) => {
+    if (type === 1) {
+      if (activeStep < 1) {
+        if (props.process.setor === 0) {
+          return toast.error("O campo setor é obrigatório");
+        } else if (!Boolean(props.feedstock.name)) {
+          return toast.error("Campo da materia prima está vazio");
+        } else if (!Boolean(props.feedstock.measure)) {
+          return toast.error("Medida vazia");
+        } else if (props.feedstock.balance === 0) {
+          return toast.error("Peso/Litro não pode ser zero");
+        }
+
+        setActiveStep(activeStep + 1);
+      } else {
+        if (activeStep < 2 && props.products.length > 0) {
+          setActiveStep(activeStep + 1);
+          props.saveProcess();
+        } else {
+          toast.error("Adicione um ou mais produto derivado!");
+        }
+      }
+    } else {
+      activeStep >= 1 ? setActiveStep(activeStep - 1) : setActiveStep(0);
+    }
+  };
 
   const QontoConnector = styled(StepConnector)(({ theme }) => ({
     [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -146,33 +183,42 @@ const ModalProcess: React.FC<Props> = (props) => {
                   name="setor"
                   isSearchable={false}
                   placeholder="Selecione..."
+                  value={setores.map((e) => {
+                    if(e.id === props.process.setor)
+                      return {label: e?.name, value: e?.id}
+                  })[0]}
+                  onChange={(e) => props.setProcess({ ...props.process, setor: e.value })}
                   required
                 />
               </div>
-              <TitleDivider className="pb-5" title="Dados da matéria prima" />
-              <InputAsyncSelect
-                label="Materia Prima"
-                className={"input font-14-responsive mt-1 w-5/12"}
-                loadOptions={props.loadFeedstockName}
-                placeholder="Pesquisar..."
-                // isSearchable
-                isClearable
-                onChange={(e) => props.setFeedstock(e)}
-                value={props.feedstock}
-              />
+              <TitleDivider className="pt-10 " title="Dados da matéria prima" />
               <div className="flex mt-10">
-                <InputDefault
-                  className="w-6/12 mr-5"
-                  label="Nome"
-                  type="text"
-                  placeholder="Digite aqui"
-                  value={props.feedstock.name}
-                  onChange={(e) =>
-                    props.setFeedstock({
-                      ...props.feedstock,
-                      name: e.target.value,
-                    })
-                  }
+                <CreateAsyncSelect
+                  label="Materia Prima"
+                  className={"input font-14-responsive mt-1 w-6/12"}
+                  loadOptions={props.optionsFeed}
+                  placeholder="Pesquisar..."
+                  onChangeCreate={(e) => {
+                    const obj = { ...props.feedstock, name: e };
+                    const option = { value: 0, label: obj.name, ...obj };
+                    props.setOptionsFeed([...props.optionsFeed, option]);
+                    props.setFeedstock(option);
+                  }}
+                  isClearable
+                  onChange={(e) => {
+                    if (e == null) {
+                      props.setFeedstock(initialFeedstock);
+                    } else {
+                      const obj = {
+                        id: e.value,
+                        name: e.label,
+                        ...e,
+                      } as FeedstockType;
+                      props.setFeedstock(obj);
+                    }
+                  }}
+                  value={props.feedstock}
+                  required
                 />
                 <InputSelectDefault
                   className="w-3/12 mr-5"
@@ -183,8 +229,18 @@ const ModalProcess: React.FC<Props> = (props) => {
                   isSearchable={false}
                   placeholder="Selecione..."
                   required
+                  value={unidadeMedidas.find((e) => e.label === props.feedstock.measure)}
+                  onChange={(e) => props.setFeedstock({ ...props.feedstock, measure: e.value })}
                 />
-                <InputNumber label="Peso/Litro" casaDecimal={3} separadorDecimal="," prefixo="" placeholder="0,000" />
+                <InputNumber
+                  label="Peso/Litro"
+                  casaDecimal={3}
+                  separadorDecimal=","
+                  prefixo=""
+                  placeholder="0,000"
+                  value={props.feedstock.balance}
+                  onChange={(e) => props.setFeedstock({ ...props.feedstock, balance: Number(e.target.value) })}
+                />
               </div>
             </div>
           </TabContent>
@@ -192,26 +248,32 @@ const ModalProcess: React.FC<Props> = (props) => {
           <TabContent index={1} value={activeStep}>
             <div className="w-full p-8">
               <TitleDivider className="pb-5" title="Produtos derivados" />
-              {/* <InputAsyncSelect
-                label="Pesquise o produtos"
-                className={"input font-14-responsive mt-1 w-5/12"}
-                loadOptions={props.loadProductName}
-                placeholder="Pesquisar..."
-                // isSearchable
-                isClearable
-                onChange={(e) => props.setFeedstock(e)}
-                value={props.feedstock}
-              /> */}
               <div className="flex mt-5">
-                <InputAsyncSelect
+                <CreateAsyncSelect
                   label="Pesquise o produto"
                   className={"input font-14-responsive w-5/12"}
-                  loadOptions={props.loadProductName}
+                  loadOptions={props.products}
                   placeholder="Pesquisar..."
-                  // isSearchable
                   isClearable
-                  onChange={(e) => props.setFeedstock(e)}
-                  value={props.feedstock}
+                  onChangeCreate={(e) => {
+                    const obj = { ...props.product, name: e };
+                    const option = { value: 0, label: obj.name, ...obj };
+                    props.setOptionsProducts([...props.optionsProducts, option]);
+                    props.setProduct(option);
+                  }}
+                  onChange={(e) => {
+                    if (e == null) {
+                      props.setProduct(initialProduct);
+                    } else {
+                      const obj = {
+                        id: e.value,
+                        name: e.label,
+                        ...e,
+                      } as ProductType;
+                      props.setProduct(obj);
+                    }
+                  }}
+                  value={props.product}
                 />
                 <InputSelectDefault
                   className="w-3/12 mr-5"
@@ -222,18 +284,28 @@ const ModalProcess: React.FC<Props> = (props) => {
                   isSearchable={false}
                   placeholder="Selecione..."
                   required
+                  value={unidadeMedidas.find((e) => e.value === props.product.measure)}
+                  onChange={(e) => props.setProduct({ ...props.product, measure: e.value })}
                 />
-                <InputNumber label="Peso/Litro" casaDecimal={3} separadorDecimal="," prefixo="" placeholder="0,000" />
+                <InputNumber
+                  label="Peso/Litro"
+                  casaDecimal={3}
+                  separadorDecimal=","
+                  prefixo=""
+                  placeholder="0,000"
+                  value={props.product.balance}
+                  onChange={(e) => props.setProduct({ ...props.product, balance: Number(e.target.value) })}
+                />
                 <ButtonBase
                   label="Adicionar"
                   model="btn_base"
                   className="primary-color ml-4 mt-1 w-32"
                   size="large"
-                  onClick={() => setActiveStep(activeStep + 1)}
+                  onClick={() => props.addProductDerivado()}
                 />
               </div>
               <TitleDivider className="pb-2 pt-5" title={`Lista de produtos (${props.products.length})`} />
-              <ListProductConf products={props.products} setProducts={props.setProducts} type="pd" height="450px"/>
+              <ListProductConf products={props.products} setProducts={props.setProducts} type="pd" height="450px" />
             </div>
           </TabContent>
 
@@ -262,14 +334,14 @@ const ModalProcess: React.FC<Props> = (props) => {
               model="btn_line"
               className="primary-color mr-5  w-32"
               size="large"
-              onClick={() => (activeStep === 0 ? props.onRequestClose() : setActiveStep(activeStep - 1))}
+              onClick={() => (activeStep === 0 ? props.onRequestClose() : alterStep(0))}
             />
             <ButtonBase
-              label="Sequinte"
+              label={activeStep < 1 ? "Sequinte" : "Salvar Processo"}
               model="btn_base"
-              className="primary-color mr-5  w-32"
+              className="primary-color mr-5  w-34 px-1"
               size="large"
-              onClick={() => setActiveStep(activeStep + 1)}
+              onClick={() => alterStep(1)}
             />
           </div>
         </Card>

@@ -5,8 +5,8 @@ export type ProdutoType = {
     estabelecimento: number;
     codigo: number;
     ean: string;
-    nome:string;
-    nomeForn:string;
+    name:string;
+    nameForn:string;
     categoria?: CategoriaType;
     dtCreate:Date | null;
     dtUpdate: Date | null;
@@ -49,8 +49,8 @@ export const produtoinitial: ProdutoType = {
     estabelecimento: 0,
     codigo: 0,
     ean: '',
-    nome: '',
-    nomeForn:'',
+    name: '',
+    nameForn:'',
     dtCreate: new Date(),
     dtUpdate: new Date(),
     dtVencimento: null,

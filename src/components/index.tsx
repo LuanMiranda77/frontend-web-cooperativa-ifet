@@ -1,4 +1,5 @@
 //export default
+export { CreateAsyncSelect } from './Inputs/CreateAsyncSelect';
 export { NavTab } from './NavTab';
 export { TabsDefault } from './TabsDefault';
 export { MenuAside } from './MenuAside';
