@@ -19,21 +19,43 @@ export default function UseProcess() {
   const [products, setProducts] = useState(new Array<ProductType>());
   const responsibleUser = useSelector(selectStateUser);
   const [showModal, setShowModal] = useState(false);
+  const [dialog, setDialog] = useState(false);
   const [process, setProcess] = useState<ProcessType>(initialProcess);
+  const url = "api/process";
 
   function hanldeSave() {}
 
-  function loadData() {}
+  function loadData() {
+    api
+      .get(url)
+      .then((e) => {
+        setDataSource(e.data);
+      })
+      .catch((e) => toast.error("Erro:" + e));
+  }
 
   async function loadFeedstockName() {
     const data = (await api.get("/api/feedstock")).data;
     const dt = data.map((item: FeedstockType) => {
-      return { value: item?.id, label: item.name, measure: item.measure, balance: item.balance };
+      return { value: item?.id, label: item.name, measure: item.measure, balance: item.balance, setor: item.setor.id };
     });
     setOptionsFeed(dt);
   }
 
-  function loadProductName(name: string) {}
+  async function loadProductName() {
+    const data = (await api.get(`/api/produto/setor?pID=${process.setor}`)).data;
+    const dt = data.map((item: ProductType) => {
+      return {
+        value: item?.id,
+        label: item.name,
+        measure: item.measure,
+        balance: item.balance,
+        price: item.price,
+        setor: item.setor.id,
+      };
+    });
+    setOptionsProducts(dt);
+  }
 
   function addProductDerivado() {
     if (!Boolean(product.name) || !Boolean(product.measure)) {
@@ -49,50 +71,87 @@ export default function UseProcess() {
     } else {
       setProducts([...products, product]);
     }
-    setProduct({...initialProduct});
+    setProduct({ ...initialProduct });
   }
 
   function saveProcess(status: string) {
-    process.feedstock = feedstock;
-    process.products = products;
+    let feed = { ...feedstock } as any;
+    delete feed.label;
+    delete feed.value;
+    delete feed.setor;
+    process.feedstock = feed;
+    process.products = products.map((p) => {
+      let product = { ...p } as any;
+      delete product.value;
+      delete product.label;
+      product.setor = { id: process.setor };
+      return product;
+    });
     process.status = status;
-    process.responsibleUser = responsibleUser.codigo;
+    process.responsibleUser = responsibleUser.id;
 
-    if (process.id) {
+    if (process.id == null) {
       api
-        .post("process", process)
+        .post(url, process)
         .then(() => {
           setShowModal(false);
           toast.success("Processo Salvo!");
+          loadData();
         })
         .catch((e) => toast.error("Erro:" + e));
     } else {
       api
-        .put("process", process)
+        .put(url, process)
         .then(() => {
           setShowModal(false);
           toast.success("Processo Atualizado!");
+          loadData();
         })
         .catch((e) => toast.error("Erro:" + e));
     }
   }
 
+  function editProcess(process: any) {
+    const feed = {
+      ...process.feedstock,
+      label: process.feedstock.name,
+      value: process.feedstock.id,
+    };
+    setProcess({ ...process });
+    setFeedstock(feed);
+    findProductsByProcess(process.id);
+    setShowModal(true);
+  }
+
+  function findProductsByProcess(id: number) {
+    api
+      .get(`api/process/products?pID=${id}`)
+      .then((resp) => {
+        console.log(resp.data);
+        setProducts(resp.data);
+      })
+      .catch((e) => toast.error("Erro:" + e));
+  }
+
+  async function deleteProcess(pID: number) {
+    api
+      .delete(`api/process?pID=${pID}`)
+      .then((resp) => {
+        setDialog(false);
+        loadData();
+        toast.success("Processo Deletado com sucesso!");
+      })
+      .catch((e) => toast.error("Erro:" + e));
+  }
+
   useEffect(() => {
-    let prod = initialProduct;
-    let i = 0;
-    // while (i < 10) {
-    //   prod.name = "test" + i;
-    //   prod.id = i + 1;
-    //   prod.balance = 0.5;
-    //   prod.measure = "KG";
-    //   setProducts((old) => {
-    //     old.push(prod);
-    //     return old;
-    //   });
-    //   i++;
-    // }
     loadFeedstockName();
+    loadData();
   }, []);
+
+  useEffect(() => {
+    loadProductName();
+  }, [process.setor]);
 
   return {
     initialProcess,
@@ -123,5 +182,10 @@ export default function UseProcess() {
     optionsProducts,
     setOptionsProducts,
     saveProcess,
+    editProcess,
+    findProductsByProcess,
+    deleteProcess,
+    dialog,
+    setDialog,
   };
 }

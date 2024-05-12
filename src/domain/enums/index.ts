@@ -20,11 +20,11 @@ export enum Cargo {
 }
 
 export enum EnumStatusProcess {
-  RASCUNHO = "Rascunho",
-  CAPITACAO = "Capitação",
-  PENDENCIA = "Pendência",
-  CONFERENCIA = "Conferencia",
-  FINALIZADO = "Finalizado",
+  RASCUNHO = "RASCUNHO",
+  CAPITACAO = "CAPITACAO",
+  PENDENCIA = "PENDENCIA",
+  CONFERENCIA = "CONFERENCIA",
+  FINALIZADO = "FINALIZADO",
 }
 
 export enum Roles {

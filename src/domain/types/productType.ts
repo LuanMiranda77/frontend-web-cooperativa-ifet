@@ -1,23 +1,26 @@
+import { SetorType, initialSetor } from "./setor";
+
 export type ProductType = {
   id?: number | null;
-  codeBar: string;
+  ean: string;
   name: string;
   balance: number;
   measure: string;
   price: number;
-  dateCreate: Date;
   deleted: number;
   status: "S" | "N";
+  setor:SetorType;
+  discrepancy?:string;
 };
 
 export const initialProduct: ProductType = {
   id: null,
-  codeBar: "",
+  ean: "",
   name: "",
   balance: 0,
   measure: "",
   price: 0,
-  dateCreate: new Date(),
   deleted: 0,
   status: "S",
+  setor:initialSetor
 };

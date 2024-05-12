@@ -3,7 +3,7 @@ import { UserAplicationType } from '../../domain/types/user_aplication';
 import { RootState } from '../index.store';
 
 export const initialState = {
-    codigo:0,
+    id:0,
     name: '',
     cpf:'',
     email: '',

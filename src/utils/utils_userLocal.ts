@@ -1,4 +1,3 @@
-import { Cargo } from '../domain/enums';
 import { UserAplicationType } from '../domain/types/user_aplication';
 import { persistLocalStorage } from './persistLocalStorage';
 

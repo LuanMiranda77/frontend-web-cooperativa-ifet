@@ -1,7 +1,7 @@
-import { ProductType } from "./productType";
+import { SetorType, initialSetor } from "./setor";
 
 export type FeedstockType = {
-  id: number | null;
+  id: number;
   codeBar: string;
   name: string;
   balance: number;
@@ -9,11 +9,11 @@ export type FeedstockType = {
   dateCreate: Date;
   dateUpdate: null;
   deleted: number;
-  products: Array<ProductType>;
+  setor: SetorType;
 };
 
 export const initialFeedstock: FeedstockType = {
-  id: null,
+  id: 0,
   codeBar: "",
   name: "",
   balance: 0.0,
@@ -21,5 +21,5 @@ export const initialFeedstock: FeedstockType = {
   dateCreate: new Date(),
   dateUpdate: null,
   deleted: 0,
-  products: new Array<ProductType>(),
+  setor: initialSetor,
 };

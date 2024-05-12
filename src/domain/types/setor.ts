@@ -3,3 +3,9 @@ export type SetorType = {
   cnpj: string;
   name: string;
 };
+
+export const initialSetor: SetorType={
+  id: null,
+  cnpj: '',
+  name: ''
+}

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Controller } from "react-hook-form";
-import CreatableSelect from 'react-select/creatable';
+import CreatableSelect from "react-select/creatable";
 import { ThemeContext } from "styled-components";
 import { Container } from "./styles";
 
@@ -26,6 +26,7 @@ interface Props {
   name?: string;
   disabled?: boolean;
   loadOptions: any;
+  noOptionsMessage?: string;
 }
 
 export const CreateAsyncSelect: React.FC<Props> = (props) => {
@@ -53,16 +54,14 @@ export const CreateAsyncSelect: React.FC<Props> = (props) => {
   };
   return (
     <Container
-      className={`w-full font-bold text-left ${
-        props.label ? "input_line_group" : ""
-      } ${props.className ? props.className : ""}`}
+      className={`w-full font-bold text-left ${props.label ? "input_line_group" : ""} ${
+        props.className ? props.className : ""
+      }`}
     >
       {props.label && (
         <label className="input_line__label" htmlFor="">
           {props.label}
-          <span className="text-red-500 font-bold">
-            {props.required ? " *" : ""}
-          </span>
+          <span className="text-red-500 font-bold">{props.required ? " *" : ""}</span>
         </label>
       )}
       {props.control && props.name ? (
@@ -84,7 +83,9 @@ export const CreateAsyncSelect: React.FC<Props> = (props) => {
               onCreateOption={props.onChangeCreate}
               noOptionsMessage={(obj: { inputValue: string }) =>
                 obj.inputValue.length < 3
-                  ? "Digite 3 caracteres para pesquisar"
+                  ? props.noOptionsMessage
+                    ? props.noOptionsMessage
+                    : "Digite 3 caracteres para pesquisar"
                   : "Item não existe"
               }
               loadingMessage={() => "Carregando..."}
@@ -93,7 +94,7 @@ export const CreateAsyncSelect: React.FC<Props> = (props) => {
               value={props.value}
               isDisabled={props.disabled}
               ref={ref}
-              formatCreateLabel={userInput => `Criar novo: ${userInput}`}
+              formatCreateLabel={(userInput) => `Criar novo: ${userInput}`}
             />
           )}
         />
@@ -112,19 +113,19 @@ export const CreateAsyncSelect: React.FC<Props> = (props) => {
           onChange={props.onChange}
           noOptionsMessage={(obj: { inputValue: string }) =>
             obj.inputValue.length < 3
-              ? "Digite 3 caracteres para pesquisar"
+              ? props.noOptionsMessage
+                ? props.noOptionsMessage
+                : "Digite 3 caracteres para pesquisar"
               : "Item não existe"
           }
           loadingMessage={() => "Carregando..."}
           styles={customStyles}
           value={props.value}
           isDisabled={props.disabled}
-          formatCreateLabel={userInput => `Criar novo: ${userInput}`}
+          formatCreateLabel={(userInput) => `Criar novo: ${userInput}`}
         />
       )}
-      <small className="text-red-500 absolute top-12 text-xs left-1 font-bold">
-        {props.errorMessage}
-      </small>
+      <small className="text-red-500 absolute top-12 text-xs left-1 font-bold">{props.errorMessage}</small>
     </Container>
   );
 };

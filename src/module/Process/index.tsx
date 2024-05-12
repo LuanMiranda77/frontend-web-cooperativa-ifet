@@ -1,8 +1,14 @@
 import { Column } from "devextreme-react/data-grid";
 import React from "react";
-import { FaPlus } from "react-icons/fa";
-import { ButtonIcon, DataGridDefault } from "../../components";
+import { FaPencilAlt, FaPlus, FaTrash } from "react-icons/fa";
+import { TbListDetails } from "react-icons/tb";
+import { useSelector } from "react-redux";
+import { ButtonIcon, DataGridDefault, DialogPopupConfirme } from "../../components";
+import { DicColorStatus, DicProcessStatus } from "../../constants/dicProcessStatus";
+import { EstabelecimentoType } from "../../domain";
+import { Cargo, EnumStatusProcess } from "../../domain/enums";
 import UseProcess from "../../hooks/useProcess";
+import { selectStateEstabelecimentos } from "../../store/slices/estabelecimentos.slice";
 import { UtilsDate } from "../../utils/utils_date";
 import ModalProcess from "./ModalProcess";
 
@@ -14,7 +20,6 @@ const Process: React.FC = () => {
     initialFeedstock,
     initialProduct,
     dataSource,
-    setDataSource,
     process,
     setProcess,
     feedstock,
@@ -24,53 +29,32 @@ const Process: React.FC = () => {
     products,
     setProducts,
     responsibleUser,
-    hanldeSave,
-    loadData,
     showModal,
     setShowModal,
     loadFeedstockName,
     loadProductName,
     addProductDerivado,
-    optionsFeed, 
+    optionsFeed,
     setOptionsFeed,
-    optionsProducts, 
+    optionsProducts,
     setOptionsProducts,
     saveProcess,
+    editProcess,
+    deleteProcess,
+    dialog,
+    setDialog,
   } = UseProcess();
 
-  const renderCell = (element: any) => {
-    console.log(element);
-    if (element.columnIndex === 1) {
-      return (
-        <span>{`${element.value} ${
-          Boolean(element.data.lastName) ? element.data.lastName : ""
-        }`}</span>
-      );
-    }
-    if (element.value === "S") {
-      return (
-        <div
-          className="rounded-full h-6 text-center p-1"
-          style={{ backgroundColor: colors.success }}
-        >
-          <span className="font-bold text-white">ATIVO</span>
-        </div>
-      );
-    } else if (element.value === "N") {
-      return (
-        <div
-          className="rounded-full  h-6 text-center p-1"
-          style={{ backgroundColor: colors.error }}
-        >
-          <span className="font-bold text-white">INATIVO</span>
-        </div>
-      );
-    } else if (element.columnIndex === 2) {
-      <span className="font-bold" style={{ color: colors.info }}></span>;
-    } else if (element.columnIndex === 5) {
-      return <div className="flex text-lg justify-between px-3"></div>;
-    }
-  };
+  const setores = useSelector(selectStateEstabelecimentos);
+
+  const customStatus = (element: any) => (
+    <div
+      className="font-bold rounded"
+      style={{ color: DicColorStatus[element.value], border: `1px solid ${DicColorStatus[element.value]}` }}
+    >
+      <span>{DicProcessStatus[element.value]}</span>
+    </div>
+  );
 
   return (
     <>
@@ -87,6 +71,9 @@ const Process: React.FC = () => {
                   icon={<FaPlus />}
                   width={"100%"}
                   onClick={() => {
+                    setFeedstock(initialFeedstock);
+                    setProduct(initialProduct);
+                    setProducts([]);
                     setProcess(initialProcess);
                     setShowModal(true);
                   }}
@@ -112,39 +99,34 @@ const Process: React.FC = () => {
               cssClass="font-bold column-1"
               sortOrder={"asc"}
             />
-              <Column
-              dataField="setor.name"
+            <Column
+              dataField="setor"
               caption="Setor"
               alignment="center"
               dataType=""
               width={170}
-              cellRender={renderCell}
+              cellRender={(e) => {
+                let setor = setores.find((setor: EstabelecimentoType) => setor.id === e.value);
+                return setor ? <span>{setor.name}</span> : <span>-</span>;
+              }}
               allowSearch={false}
             />
             <Column
-              dataField="name"
+              dataField="feedstock.name"
               caption="Materia prima"
               alignment="left"
               dataType="string"
               cssClass="font-bold"
-              cellRender={renderCell}
             />
             <Column
-              dataField="mensure"
+              dataField="feedstock.measure"
               caption="Med"
               alignment="center"
               dataType=""
               width={80}
-              cellRender={renderCell}
               allowSearch={false}
             />
-            <Column
-              dataField="balance"
-              caption="Saldo"
-              alignment="left"
-              dataType="string"
-              width={120}
-            />
+            <Column dataField="feedstock.balance" caption="Saldo" alignment="center" dataType="string" width={120} />
             <Column
               dataField="dateCreate"
               caption="Abertura"
@@ -152,20 +134,16 @@ const Process: React.FC = () => {
               dataType="string"
               width={140}
               allowSearch={false}
-              cellRender={(e) =>
-                UtilsDate.formatByDDMMYYYY(e.value ? e.value : null)
-              }
+              cellRender={(e) => UtilsDate.formatByDDMMYYYY(e.value ? e.value : null)}
             />
-             <Column
+            <Column
               dataField="dateClose"
               caption="Finalizado"
               alignment="center"
               dataType="string"
               width={140}
               allowSearch={false}
-              cellRender={(e) =>
-                UtilsDate.formatByDDMMYYYY(e.value ? e.value : null)
-              }
+              cellRender={(e) => (e.value ? UtilsDate.formatByDDMMYYYY(e.value) : "-")}
             />
             <Column
               dataField="status"
@@ -173,7 +151,7 @@ const Process: React.FC = () => {
               alignment="center"
               dataType=""
               width={150}
-              cellRender={renderCell}
+              cellRender={customStatus}
               allowSearch={false}
             />
             <Column
@@ -182,12 +160,51 @@ const Process: React.FC = () => {
               alignment="center"
               dataType=""
               width={100}
-              cellRender={renderCell}
+              cellRender={(e) => {
+                return (
+                  <div className="flex justify-between px-5">
+                    {[EnumStatusProcess.RASCUNHO, EnumStatusProcess.PENDENCIA].includes(e.key.status) && (
+                      <i className="btn cursor-pointer" title="Editar" onClick={() => editProcess(e.data)}>
+                        <FaPencilAlt color={colors.primary} />
+                      </i>
+                    )}
+                    {EnumStatusProcess.CAPITACAO === e.key.status && responsibleUser.cargo !== Cargo.CAPITADOR && (
+                      <i className="cursor-pointer btn" title="Conferir" onClick={() => editProcess(e.data)}>
+                        <TbListDetails size={18} color={colors.primary} />
+                      </i>
+                    )}
+                    {![
+                      EnumStatusProcess.FINALIZADO,
+                      EnumStatusProcess.CONFERENCIA,
+                      EnumStatusProcess.CAPITACAO,
+                    ].includes(e.key.status) && (
+                      <i className="btn cursor-pointer" title="Excluir" onClick={() => setDialog(true)}>
+                        <FaTrash color={colors.error} />
+                      </i>
+                    )}
+                    {dialog && (
+                      <DialogPopupConfirme
+                        title="Confirme"
+                        isOpen={dialog}
+                        onRequestClose={() => setDialog(false)}
+                        onClickSim={() => deleteProcess(e.key.id)}
+                        children={
+                          <div>
+                            <span>Tem certeza que deseja deletar o processo?</span>
+                            <p className="text-red-700 text-center font-bold">Esta ação não poderar ser desfeito!</p>
+                          </div>
+                        }
+                      />
+                    )}
+                  </div>
+                );
+              }}
               allowSearch={false}
             />
           </DataGridDefault>
         </div>
       </div>
+
       <ModalProcess
         isOpen={showModal}
         onRequestClose={() => setShowModal(false)}

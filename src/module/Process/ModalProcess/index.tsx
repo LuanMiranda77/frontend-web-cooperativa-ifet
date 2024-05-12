@@ -6,19 +6,22 @@ import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import { styled } from "@mui/material/styles";
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ThemeContext } from "styled-components";
-import { ButtonBase, InputNumber, InputSelectDefault } from "../../../components";
+import { ButtonBase, InputNumber, InputSelectDefault, ModalDefault } from "../../../components";
 import { CreateAsyncSelect } from "../../../components/Inputs/CreateAsyncSelect";
 import TabContent from "../../../components/TabContent";
 import TitleDivider from "../../../components/TitleDivider";
 import { unidadeMedidas } from "../../../constants/constMedidas";
+import { EstabelecimentoType } from "../../../domain";
+import { Cargo, EnumStatusProcess } from "../../../domain/enums";
 import { FeedstockType, initialFeedstock } from "../../../domain/types/feedstock";
 import { ProcessType } from "../../../domain/types/processType";
 import { ProductType, initialProduct } from "../../../domain/types/productType";
 import { selectStateEstabelecimentos } from "../../../store/slices/estabelecimentos.slice";
+import { selectStateUser } from "../../../store/slices/usuario.slice";
 import { UtilsConvert } from "../../../utils/utils_convert";
 import ListProductConf from "./lista";
 import "./style.css";
@@ -47,7 +50,11 @@ const ModalProcess: React.FC<Props> = (props) => {
   const steps = ["Materia prima", "Produtos derivado", "Conferência"];
   const [activeStep, setActiveStep] = useState(0);
   const { title, colors } = useContext(ThemeContext);
+  const actualUser = useSelector(selectStateUser);
   const setores = useSelector(selectStateEstabelecimentos);
+  const [optionSetores, setOptionSetores] = useState<any[]>([]);
+  const [optionFeeds, setOptionFedds] = useState<any[]>([]);
+  const [show, setShow] = useState(false);
 
   const alterStep = (type: number) => {
     if (type === 1) {
@@ -65,8 +72,8 @@ const ModalProcess: React.FC<Props> = (props) => {
         setActiveStep(activeStep + 1);
       } else {
         if (activeStep < 2 && props.products.length > 0) {
-          setActiveStep(activeStep + 1);
-          props.saveProcess();
+          actualUser.cargo !== Cargo.CAPITADOR && setActiveStep(activeStep + 1);
+          props.saveProcess(EnumStatusProcess.CAPITACAO);
         } else {
           toast.error("Adicione um ou mais produto derivado!");
         }
@@ -74,6 +81,10 @@ const ModalProcess: React.FC<Props> = (props) => {
     } else {
       activeStep >= 1 ? setActiveStep(activeStep - 1) : setActiveStep(0);
     }
+  };
+
+  const saveRascunho = () => {
+    props.saveProcess(EnumStatusProcess.RASCUNHO);
   };
 
   const QontoConnector = styled(StepConnector)(({ theme }) => ({
@@ -143,6 +154,21 @@ const ModalProcess: React.FC<Props> = (props) => {
     );
   }
 
+  useEffect(() => {
+    let list = setores.map((item: EstabelecimentoType) => {
+      return { label: item.name, value: item.id };
+    });
+
+    setOptionSetores(list);
+    props.process.status === EnumStatusProcess.CAPITACAO ? setActiveStep(2) : setActiveStep(0);
+  }, [props.isOpen]);
+
+  useEffect(() => {
+    const options = props.optionsFeed.filter((e: any) => e.setor?.id == props.process.setor);
+    console.log(options, props.optionsFeed);
+    setOptionFedds(options);
+  }, [props.process.setor]);
+
   return (
     <Dialog
       className="m-9 rounded-t-xl"
@@ -177,26 +203,22 @@ const ModalProcess: React.FC<Props> = (props) => {
               <div className="w-4/12 mb-5 mt-0">
                 <InputSelectDefault
                   label="Setor"
-                  options={setores.map((item) => {
-                    return { label: item?.name, value: item?.id };
-                  })}
+                  options={optionSetores}
                   name="setor"
                   isSearchable={false}
                   placeholder="Selecione..."
-                  value={setores.map((e) => {
-                    if(e.id === props.process.setor)
-                      return {label: e?.name, value: e?.id}
-                  })[0]}
+                  value={optionSetores.find((e: any) => e.value === props.process.setor)}
                   onChange={(e) => props.setProcess({ ...props.process, setor: e.value })}
                   required
                 />
+                {/* {console.log(props.process)} */}
               </div>
               <TitleDivider className="pt-10 " title="Dados da matéria prima" />
               <div className="flex mt-10">
                 <CreateAsyncSelect
                   label="Materia Prima"
                   className={"input font-14-responsive mt-1 w-6/12"}
-                  loadOptions={props.optionsFeed}
+                  loadOptions={props.optionsFeed.filter((e: any) => e.setor === props.process.setor)}
                   placeholder="Pesquisar..."
                   onChangeCreate={(e) => {
                     const obj = { ...props.feedstock, name: e };
@@ -204,6 +226,7 @@ const ModalProcess: React.FC<Props> = (props) => {
                     props.setOptionsFeed([...props.optionsFeed, option]);
                     props.setFeedstock(option);
                   }}
+                  noOptionsMessage="Selecione um setor primeiro."
                   isClearable
                   onChange={(e) => {
                     if (e == null) {
@@ -252,7 +275,7 @@ const ModalProcess: React.FC<Props> = (props) => {
                 <CreateAsyncSelect
                   label="Pesquise o produto"
                   className={"input font-14-responsive w-5/12"}
-                  loadOptions={props.products}
+                  loadOptions={props.optionsProducts}
                   placeholder="Pesquisar..."
                   isClearable
                   onChangeCreate={(e) => {
@@ -305,7 +328,15 @@ const ModalProcess: React.FC<Props> = (props) => {
                 />
               </div>
               <TitleDivider className="pb-2 pt-5" title={`Lista de produtos (${props.products.length})`} />
-              <ListProductConf products={props.products} setProducts={props.setProducts} type="pd" height="450px" />
+              <ListProductConf
+                setProduct={props.setProduct}
+                product={props.product}
+                products={props.products}
+                setProducts={props.setProducts}
+                type="pd"
+                height="450px"
+                process={props.process}
+              />
             </div>
           </TabContent>
 
@@ -324,28 +355,78 @@ const ModalProcess: React.FC<Props> = (props) => {
                 </span>
               </div>
               <TitleDivider className="pb-5" title="Lista de produtos" />
-              <ListProductConf products={props.products} setProducts={props.setProducts} height="420px" type="cf" />
+              <ListProductConf
+                setProduct={props.setProduct}
+                product={props.product}
+                products={props.products}
+                setProducts={props.setProducts}
+                height="420px"
+                type="cf"
+              />
             </div>
           </TabContent>
 
           <div className="absolute bottom-0 flex w-full justify-center pb-5">
+            {activeStep === 2 && (
+              <ButtonBase
+                label={"Cancelar"}
+                model="btn_line"
+                className="primary-color mr-5  w-32"
+                size="large"
+                onClick={() => props.onRequestClose()}
+              />
+            )}
+            {activeStep < 2 && (
+              <ButtonBase
+                label={activeStep === 0 ? "Cancelar" : "Voltar"}
+                model="btn_line"
+                className="primary-color mr-5  w-32"
+                size="large"
+                onClick={() => (activeStep === 0 ? props.onRequestClose() : alterStep(0))}
+              />
+            )}
+            {activeStep === 1 && props.process.status === EnumStatusProcess.RASCUNHO && (
+              <ButtonBase
+                label={"Salvar Rascunho"}
+                model="btn_line"
+                className="primary-color mr-5  w-34 px-1"
+                size="large"
+                onClick={saveRascunho}
+              />
+            )}
+            {activeStep === 2 && (
+              <ButtonBase
+                label={"Pendenciar Conferência"}
+                model="btn_line"
+                className="primary-color mr-5  w-34 px-1"
+                size="large"
+                onClick={() => props.saveProcess(EnumStatusProcess.PENDENCIA)}
+              />
+            )}
             <ButtonBase
-              label={activeStep === 0 ? "Cancelar" : "Voltar"}
-              model="btn_line"
-              className="primary-color mr-5  w-32"
-              size="large"
-              onClick={() => (activeStep === 0 ? props.onRequestClose() : alterStep(0))}
-            />
-            <ButtonBase
-              label={activeStep < 1 ? "Sequinte" : "Salvar Processo"}
+              label={activeStep == 0 ? "Sequinte" : activeStep == 1 ? "Finalizar Capitação" : "Finalizar Conferência"}
               model="btn_base"
               className="primary-color mr-5  w-34 px-1"
               size="large"
-              onClick={() => alterStep(1)}
+              onClick={() => (activeStep === 2 ? setShow(true) : alterStep(1))}
             />
           </div>
         </Card>
       </div>
+      {show && (
+        <ModalDefault
+          onClickAction={() => {
+            props.saveProcess(EnumStatusProcess.FINALIZADO);
+            setShow(false);
+          }}
+          isOpen={show}
+          title="Confirme"
+          onRequestClose={() => setShow(false)}
+        >
+          <span>Tem certeza que deseja finalizar a conferencia</span>
+          <p className="text-red-700 text-center font-bold">O processo não poderar ser desfeito!</p>
+        </ModalDefault>
+      )}
     </Dialog>
   );
 };
