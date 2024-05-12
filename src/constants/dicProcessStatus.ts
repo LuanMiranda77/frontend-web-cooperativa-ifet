@@ -1,6 +1,6 @@
 export const DicProcessStatus:  {[key: string] : string} = {
   RASCUNHO: "Rascunho",
-  CAPITACAO: "Capitação",
+  CAPITACAO: "Capitação Finalizada",
   PENDENCIA: "Pendência",
   CONFERENCIA: "Conferencia",
   FINALIZADO: "Finalizado",

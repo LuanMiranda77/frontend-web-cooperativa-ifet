@@ -165,7 +165,6 @@ const ModalProcess: React.FC<Props> = (props) => {
 
   useEffect(() => {
     const options = props.optionsFeed.filter((e: any) => e.setor?.id == props.process.setor);
-    console.log(options, props.optionsFeed);
     setOptionFedds(options);
   }, [props.process.setor]);
 
@@ -211,7 +210,6 @@ const ModalProcess: React.FC<Props> = (props) => {
                   onChange={(e) => props.setProcess({ ...props.process, setor: e.value })}
                   required
                 />
-                {/* {console.log(props.process)} */}
               </div>
               <TitleDivider className="pt-10 " title="Dados da matéria prima" />
               <div className="flex mt-10">
@@ -262,7 +260,8 @@ const ModalProcess: React.FC<Props> = (props) => {
                   prefixo=""
                   placeholder="0,000"
                   value={props.feedstock.balance}
-                  onChange={(e) => props.setFeedstock({ ...props.feedstock, balance: Number(e.target.value) })}
+                  fixedZeroFinal
+                  onChange={(e) => props.setFeedstock({ ...props.feedstock, balance: Number(e.target.value.replaceAll(',', '.')) })}
                 />
               </div>
             </div>
@@ -317,7 +316,8 @@ const ModalProcess: React.FC<Props> = (props) => {
                   prefixo=""
                   placeholder="0,000"
                   value={props.product.balance}
-                  onChange={(e) => props.setProduct({ ...props.product, balance: Number(e.target.value) })}
+                  fixedZeroFinal
+                  onChange={(e) => props.setProduct({ ...props.product, balance: Number(e.target.value.replaceAll(',', '.')) })}
                 />
                 <ButtonBase
                   label="Adicionar"
@@ -362,6 +362,7 @@ const ModalProcess: React.FC<Props> = (props) => {
                 setProducts={props.setProducts}
                 height="420px"
                 type="cf"
+                process={props.process}
               />
             </div>
           </TabContent>

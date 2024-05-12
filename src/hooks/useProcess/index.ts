@@ -127,7 +127,6 @@ export default function UseProcess() {
     api
       .get(`api/process/products?pID=${id}`)
       .then((resp) => {
-        console.log(resp.data);
         setProducts(resp.data);
       })
       .catch((e) => toast.error("Erro:" + e));

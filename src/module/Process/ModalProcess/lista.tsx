@@ -1,13 +1,16 @@
 import { TextareaAutosize } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { FaFileSignature, FaPen, FaRegSave, FaTrashAlt } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ThemeContext } from "styled-components";
-import { ModalDefault } from "../../../components";
+import { InputNumber, ModalDefault } from "../../../components";
 import { api } from "../../../config/api";
 import { unidadeMedidas } from "../../../constants/constMedidas";
+import { EnumStatusProcess } from "../../../domain/enums";
 import { ProcessType } from "../../../domain/types/processType";
 import { ProductType, initialProduct } from "../../../domain/types/productType";
+import { selectStateUser } from "../../../store/slices/usuario.slice";
 import { UtilsConvert } from "../../../utils/utils_convert";
 interface Props {
   products: Array<ProductType>;
@@ -16,21 +19,21 @@ interface Props {
   type: "pd" | "cf";
   product: ProductType;
   setProduct: Function;
-  process?: ProcessType;
+  process: ProcessType;
 }
 const ListProductConf: React.FC<Props> = (props) => {
   const { title, colors } = useContext(ThemeContext);
   const [show, setShow] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [isEditPrice, setIsEditPrice] = useState(false);
   const [discrepancy, setDiscrepancy] = useState<string>("");
   const [index, setIndex] = useState<number>(-1);
   const [productSelected, setProductSelect] = useState<ProductType>(initialProduct);
+  const actualUser = useSelector(selectStateUser);
 
   function removeProductDerivado(index: number) {
     const p = [...props.products];
-    p.splice(index, 1);
-    props.setProducts([...p]);
-    
+    console.log(props.process?.id, p[index].id);
     if (props.process?.id && p[index].id) {
       api
         .delete(`api/process/deleted-product?processId=${props.process?.id}&productId=${p[index].id}`)
@@ -39,6 +42,8 @@ const ListProductConf: React.FC<Props> = (props) => {
         })
         .catch((e) => toast.error("Erro:" + e));
     }
+    p.splice(index, 1);
+    props.setProducts([...p]);
   }
 
   function editProductDerivado(index: number) {
@@ -62,9 +67,9 @@ const ListProductConf: React.FC<Props> = (props) => {
     >
       {props.products.map((e: ProductType, i) => (
         <div className="w-100 h-16 my-2 rounded-xl flex items-center px-4" style={{ background: colors.gray }}>
-          <div className="w-6/12">
+          <div className={`${props.process?.status === EnumStatusProcess.CAPITACAO ? "w-4/12" : "w-6/12"}`}>
             <p className="font-bold">Nome</p>
-            {isEdit ? (
+            {isEdit && !isEditPrice ? (
               <input
                 className="px-1"
                 value={productSelected?.name}
@@ -76,7 +81,7 @@ const ListProductConf: React.FC<Props> = (props) => {
           </div>
           <div className="w-1/12">
             <p className="font-bold">Med</p>
-            {isEdit ? (
+            {isEdit && !isEditPrice ? (
               <select
                 className="w-16 h-6"
                 value={productSelected.measure}
@@ -92,55 +97,86 @@ const ListProductConf: React.FC<Props> = (props) => {
           </div>
           <div className="w-2/12">
             <p className="font-bold">Quant.</p>
-            {isEdit ? (
-              <input
-                type="number"
-                className="w-20 px-1"
+            {isEdit && !isEditPrice ? (
+              <InputNumber
+                label=""
+                casaDecimal={3}
+                separadorDecimal=","
+                prefixo=""
+                placeholder="0,000"
                 value={productSelected.balance}
-                onChange={(e) => setProductSelect({ ...productSelected, balance: Number(e.target.value) })}
+                styleClassico
+                styleInput="w-20"
+                fixedZeroFinal
+                onChange={(e) =>
+                  setProductSelect({ ...productSelected, balance: Number(e.target.value.replaceAll(",", ".")) })
+                }
               />
             ) : (
               <span>{UtilsConvert.NumberToDecimal(e.balance)}</span>
             )}
           </div>
+          {props.process?.status === EnumStatusProcess.CAPITACAO && (
+            <div className="w-2/12">
+              <p className="font-bold">Preço</p>
+              {isEdit && isEditPrice ? (
+                <InputNumber
+                  label=""
+                  casaDecimal={2}
+                  separadorDecimal=","
+                  fixedZeroFinal
+                  prefixo=""
+                  placeholder="0,00"
+                  value={productSelected.price}
+                  styleClassico
+                  styleInput="w-32"
+                  onChange={(e) =>
+                    setProductSelect({ ...productSelected, price: Number(e.currentTarget.value.replaceAll(",", ".")) })
+                  }
+                />
+              ) : (
+                <span>{UtilsConvert.formatCurrency(e.price)}</span>
+              )}
+            </div>
+          )}
           <div className="w-3/12">
             <p className="font-bold">Discrepância</p>
             <span>{e?.discrepancy ? e?.discrepancy : "-"}</span>
           </div>
           <div className="flex items-center justify-between text-center w-16">
-            {props.type == "pd" ? (
+            {isEdit ? (
+              <FaRegSave
+                className="btn cursor-pointer"
+                title="Salvar edição"
+                color={colors.info}
+                onClick={() => editProductDerivado(i)}
+                size={25}
+              />
+            ) : (
               <>
-                {isEdit ? (
-                  <FaRegSave
+                <FaPen
+                  className="btn cursor-pointer"
+                  title="Editar item"
+                  color={colors.info}
+                  onClick={() => {
+                    setProductSelect(e);
+                    setIsEdit(true);
+                    props.process?.status == EnumStatusProcess.CAPITACAO && setIsEditPrice(true);
+                  }}
+                  size={20}
+                />
+                {props.type == "pd" && (
+                  <FaTrashAlt
                     className="btn cursor-pointer"
-                    title="Salvar edição"
-                    color={colors.info}
-                    onClick={() => editProductDerivado(i)}
-                    size={25}
+                    title="Apagar item"
+                    color={colors.error}
+                    onClick={() => removeProductDerivado(i)}
+                    size={20}
                   />
-                ) : (
-                  <>
-                    <FaPen
-                      className="btn cursor-pointer"
-                      title="Editar item"
-                      color={colors.info}
-                      onClick={() => {
-                        setProductSelect(e);
-                        setIsEdit(true);
-                      }}
-                      size={20}
-                    />
-                    <FaTrashAlt
-                      className="btn cursor-pointer"
-                      title="Apagar item"
-                      color={colors.error}
-                      onClick={() => removeProductDerivado(i)}
-                      size={20}
-                    />
-                  </>
                 )}
               </>
-            ) : (
+            )}
+            {props.process?.status == EnumStatusProcess.CAPITACAO && (
               <i
                 title="Adicionar descrepancias"
                 className="btn cursor-pointer"
@@ -150,9 +186,10 @@ const ListProductConf: React.FC<Props> = (props) => {
                   setShow(true);
                 }}
               >
-                <FaFileSignature color={colors.info} size={20} />
+                <FaFileSignature color={colors.error} size={20} />
               </i>
             )}
+
             {show && (
               <ModalDefault
                 onClickAction={() => alterDiscrepancy(i)}

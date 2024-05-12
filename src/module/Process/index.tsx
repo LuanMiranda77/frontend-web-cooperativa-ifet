@@ -126,7 +126,7 @@ const Process: React.FC = () => {
               width={80}
               allowSearch={false}
             />
-            <Column dataField="feedstock.balance" caption="Saldo" alignment="center" dataType="string" width={120} />
+            {/* <Column dataField="feedstock.balance" caption="Saldo" alignment="center" dataType="string" width={120} /> */}
             <Column
               dataField="dateCreate"
               caption="Abertura"
