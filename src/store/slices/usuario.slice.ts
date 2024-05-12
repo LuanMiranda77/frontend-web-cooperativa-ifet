@@ -17,7 +17,7 @@ export const initialState = {
     cargo: null,
     roles: '',
     userName:'',
-    estabelecimento: null,
+    setor: null,
     // isOpenModal:false
 }
 

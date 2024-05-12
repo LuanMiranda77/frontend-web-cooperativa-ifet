@@ -33,7 +33,7 @@ export class UsuarioService {
             userLogado.token = token;
             
             if (userLogado.cargo !== Cargo.MASTER) {
-                userLogado.estabelecimento = resp.data.estabelecimento.id;
+                userLogado.setor = resp.data.setor.id;
             }
             //   persistLocalStorage<UserAplicationType>("@user-data", userLogado, 'set');
             // UtilsUserLocal.setTokenLogin(userLogado);

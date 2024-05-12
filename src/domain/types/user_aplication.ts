@@ -16,3 +16,19 @@ export type UserAplicationType = {
   dateUpdate: null | Date;
   setor: number | null | undefined | SetorType;
 }
+
+export const initialUserApp: UserAplicationType={
+  id: undefined,
+  name: '',
+  lastName: '',
+  userName: '',
+  email: '',
+  acesso: null,
+  status: 'S',
+  password: '',
+  cargo: null,
+  token: '',
+  dateCreate: null,
+  dateUpdate: null,
+  setor: undefined
+}

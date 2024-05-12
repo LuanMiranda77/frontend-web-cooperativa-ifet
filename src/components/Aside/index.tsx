@@ -15,6 +15,7 @@ import { Container, MenuContainer } from "./styles";
 export function Aside() {
   const dispatch = useDispatch();
   const userAplication = UtilsUserLocal.getTokenLogin();
+
   console.log(userAplication);
   return (
     <Container

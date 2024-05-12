@@ -88,7 +88,7 @@ export default function UseProcess() {
       return product;
     });
     process.status = status;
-    process.responsibleUser = responsibleUser.id;
+    process.responsibleUser = responsibleUser.id ? responsibleUser.id : 0;
 
     if (process.id == null) {
       api
