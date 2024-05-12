@@ -27,6 +27,21 @@ export enum EnumStatusProcess {
   FINALIZADO = "FINALIZADO",
 }
 
+export enum EnumStatusOrder {
+  PENDENTE = "PENDENTE",
+  FINALIZADO = "FINALIZADO",
+  CANCELADO = "CANCELADO",
+}
+
+export enum EnumTypePayment {
+  DINHEIRO = "DINHEIRO",
+  BOLETO = "BOLETO",
+  PIX = "PIX",
+  CARTAO_CREDITO = "CARTAO_CREDITO",
+  CARTAO_DEBITO = "CARTAO_DEBITO",
+  FINALIZADO = "FINALIZADO",
+}
+
 export enum Roles {
   Dashboard = "1",
   CupomFiscal = "2",
