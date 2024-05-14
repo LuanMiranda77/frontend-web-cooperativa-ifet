@@ -124,10 +124,10 @@ export class UtilsConvert {
     return Number(numero.replaceAll(",", "."));
   }
 
-  static NumberToDecimal(numero: number) {
+  static NumberToDecimal(numero: number, digitos:number=3) {
     const numeroFormatado = numero.toLocaleString("pt-BR", {
-      minimumFractionDigits: 3,
-      maximumFractionDigits: 3,
+      minimumFractionDigits: digitos,
+      maximumFractionDigits: digitos,
     });
     return numeroFormatado;
   }

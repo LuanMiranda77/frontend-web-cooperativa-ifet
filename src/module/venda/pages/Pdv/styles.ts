@@ -184,7 +184,7 @@ export const ContainerMenu  = styled.div`
 `;
 
 export const TableProduto  = styled.div`
-    height: calc(100vh - 180px);
+    height: calc(100vh - 220px);
 
     @media screen and (max-width: 40em) {
 

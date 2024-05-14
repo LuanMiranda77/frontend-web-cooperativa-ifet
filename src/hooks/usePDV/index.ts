@@ -1,27 +1,38 @@
-import { useMemo, useState } from "react";
+import { isNumber } from "lodash";
+import { useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { api } from "../../config/api";
+import { EnumStatusOrder, EnumTypePayment } from "../../domain/enums";
 import { OrderItemType, initialOrderItem } from "../../domain/types/OrderItem";
-import { OrderSaleType, initialOrderSales } from "../../domain/types/OrderSalesType";
+import { OrderSaleType, initialOrderSale } from "../../domain/types/OrderSalesType";
 import { ProductType } from "../../domain/types/productType";
+import { UtilsConvert } from "../../utils/utils_convert";
 import { UtilsUserLocal } from "../../utils/utils_userLocal";
 
 export function usePDV() {
   const navigate = useNavigate();
   const [showPoup, setShowPopup] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
-  const [sales, setSales] = useState<Array<OrderSaleType>>();
-  //   const [orderItems, setOrderItems] = useState<Array<OrderItemType>>([]);
-  const [orderSale, setOrderSale] = useState<OrderSaleType>(initialOrderSales);
+  const [sales, setSales] = useState<OrderSaleType[]>([]);
+  const [orderSale, setOrderSale] = useState<OrderSaleType>(initialOrderSale);
   const [orderItem, setOrderItem] = useState<OrderItemType>(initialOrderItem);
-  const [showModalProd, setShowModalProd] = useState(false);
+  const [showModalCancel, setShowModalCancel] = useState(false);
   const [showModalVenda, setShowModalVenda] = useState(false);
+  // const [pagination, setPagination] = useState<Pagi>();
   const [showPoupFechamento, setShowPoupFechamento] = useState(false);
-  const [totalVenda, setTotalVenda] = useState(0);
   const actualUser = UtilsUserLocal.getTokenLogin();
+  const inputProduct = useRef<any>(null);
+  const inputQuant = useRef<any>(null);
 
   async function loadOrder() {
+    api
+      .get("api/pedido/filter?limit=100")
+      .then((resp) => {
+        setSales(resp.data);
+      })
+      .catch((e) => toast.error("Erro:" + e));
     return [];
   }
 
@@ -33,51 +44,72 @@ export function usePDV() {
     api.get(`api/pedido/search-product?name=${inputValue}`).then((res) => {
       callback(
         res.data.map((e: any) => {
-          return { label: `${e.name} - preço: ${e.price}`, product: e, value: e.id, price: e.price, setor: e.setor };
+          return {
+            label: `${e.name} → Saldo: ${e.balance} | preço: ${UtilsConvert.NumberToDecimal(e.price, 2)}`,
+            product: { ...e, label: e.name, value: e.id },
+            value: e.id,
+            price: e.price,
+            setor: e.setor,
+          };
         })
       );
       setLoadingSearch(false);
     });
   };
 
-  async function saveOrder() {}
+  async function saveOrder() {
+    api
+      .post("api/pedido", orderSale)
+      .then((resp) => {
+        setOrderSale(initialOrderSale);
+        toast.success("Venda Finalizada!");
+      })
+      .catch((e) => toast.error("Erro:" + e));
+  }
 
   async function saleItem() {
-    console.log("Item vendido", orderItem);
-
+    if (!isNumber(orderItem.product) && orderItem.product.balance <= 0) {
+      setOrderItem({ ...initialOrderItem });
+      inputProduct.current?.focus();
+      return toast.warning("O Saldo do produto está zerado!");
+    }
     setOrderSale({ ...orderSale, products: [...orderSale.products, orderItem] });
     setOrderItem({ ...initialOrderItem });
-    document.getElementById("#digite-produto")?.focus();
-    let d = document.getElementById("digite-quant") as HTMLInputElement | null;
-    if (d) {
-      d.value = "";
+    if (inputProduct.current) {
+      inputProduct.current?.focus();
     }
   }
 
   const handleF2 = () => {
-    console.log("F1 pressionada");
+    if (orderSale.products.length === 0) {
+      return toast.warning("Não é possivel finalizar venda sem produtos");
+    }
+    setOrderSale({ ...orderSale, pagamento: EnumTypePayment.DINHEIRO, status: EnumStatusOrder.FINALIZADO });
+    saveOrder();
   };
 
   // Função para lidar com a tecla F2
   const handleF4 = () => {
-    console.log("F2 pressionada");
+    if (orderSale.products.length === 0) {
+      return toast.warning("Não é possivel finalizar venda sem produtos");
+    }
+    setOrderSale({ ...orderSale, pagamento: EnumTypePayment.PIX, status: EnumStatusOrder.FINALIZADO });
+    saveOrder();
   };
 
   // Função para lidar com a tecla F3
   const handleF8 = () => {
-    console.log("F3 pressionada");
+    setShowPoupFechamento(true);
   };
   const handleF10 = () => {
+    loadOrder();
     setShowModalVenda(true);
   };
   const handleESC = () => {
-    // setShowPopup(false);
-    // navigate("/");
-    // document.getElementById("#digite-produto")?.focus();
     orderSale.products.length > 0 ? setShowPopup(true) : navigate("/");
   };
   const handleDel = () => {
-    console.log("F3 pressionada");
+    setShowModalCancel(true);
   };
 
   const eventCaptureTecla = (event: any) => {
@@ -102,7 +134,7 @@ export function usePDV() {
         handleESC();
         break;
       case "Enter":
-        document.getElementById("#digite-quant")?.focus();
+        document.getElementById("digite-quant")?.focus();
         break;
     }
   };
@@ -135,14 +167,12 @@ export function usePDV() {
     setShowModalVenda,
     showPoupFechamento,
     setShowPoupFechamento,
-    totalVenda,
-    setTotalVenda,
     sales,
     setSales,
     orderSale,
     setOrderSale,
-    showModalProd,
-    setShowModalProd,
+    showModalCancel,
+    setShowModalCancel,
     actualUser,
     handleF2,
     handleF4,
@@ -156,5 +186,8 @@ export function usePDV() {
     saleItem,
     orderItem,
     setOrderItem,
+    inputProduct,
+    inputQuant,
+    saveOrder,
   };
 }

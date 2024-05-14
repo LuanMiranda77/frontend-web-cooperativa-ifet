@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Container  = styled.div`
 
     //adicionar stylos
-    height: 100%;
+    /* height: 95%; */
     width: 100%;
 
     .dx-datagrid .dx-header-row > td {

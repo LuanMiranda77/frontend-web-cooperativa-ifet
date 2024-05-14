@@ -18,9 +18,9 @@ import { NumericFormat } from "react-number-format";
 import AsyncSelect from "react-select/async";
 import { usePDV } from "../../../../hooks/usePDV";
 import { HeaderPDV } from "./components/HeaderPDV";
+import ModalCancelamento from "./components/ModalCancelamento";
 import ModalPayment from "./components/ModalPaymant";
-import ModalProduto from "./modalProduto";
-import ModalVenda from "./modalVenda";
+import ModalVenda from "./components/ModalListVendas";
 import { Container, ContainerLeft, ContainerMenu, ContainerProduto, ContainerRight } from "./styles";
 /**
  *@Author Luan Miranda
@@ -36,14 +36,12 @@ function Pdv() {
     setShowModalVenda,
     showPoupFechamento,
     setShowPoupFechamento,
-    totalVenda,
-    setTotalVenda,
     sales,
     setSales,
     orderSale,
     setOrderSale,
-    showModalProd,
-    setShowModalProd,
+    showModalCancel,
+    setShowModalCancel,
     actualUser,
     handleF2,
     handleF4,
@@ -57,55 +55,12 @@ function Pdv() {
     setOrderItem,
     loadingSearch,
     saleItem,
+    inputProduct,
+    inputQuant,
+    saveOrder,
   } = usePDV();
   const navigate = useNavigate();
-  const [showModalCaixa, setShowModalCaixa] = useState(false);
-  const [ultimoPagamento, setUltimoPagamento] = useState(0);
-  const [valorDigitado, setValorDigitado] = useState(0);
-  const [saldoPagar, setSaldoPagar] = useState(0);
-  const [troco, setTroco] = useState(0);
-  const [tipoPagamento, setTipoPagamento] = useState(-1);
 
-  const closeModal = () => {
-    setShowPoupFechamento(false);
-  };
-
-  const calculaTroco = () => {
-    document.getElementById("Troco")?.focus();
-    if (valorDigitado > totalVenda) {
-      let troco = valorDigitado - totalVenda;
-      setTroco(troco);
-    }
-  };
-
-  const liberarPgamento = (tipo: number) => {
-    setTipoPagamento(tipo);
-    if (tipo === 0) {
-      setShowPoupFechamento(true);
-    } else if (tipo === 1) {
-      setShowPoupFechamento(true);
-    } else if (tipo === 2) {
-      setShowPoupFechamento(true);
-    } else if (tipo === 3) {
-      setShowPoupFechamento(true);
-    }
-  };
-
-  const efetuarPagamento = (event: any) => {
-    if (event.key && event.key === "Enter" && tipoPagamento === 0) {
-      console.log(tipoPagamento);
-      let restante = totalVenda - valorDigitado;
-      setSaldoPagar(restante);
-      setUltimoPagamento(valorDigitado);
-      closeModal();
-    } else if (event.key && event.key === "Enter" && tipoPagamento === 1) {
-      console.log(tipoPagamento);
-    } else if (event.key && event.key === "Enter" && tipoPagamento === 2) {
-      console.log(tipoPagamento);
-    } else if (event.key && event.key === "Enter" && tipoPagamento === 3) {
-      console.log(tipoPagamento);
-    }
-  };
 
   return (
     <Container>
@@ -124,6 +79,7 @@ function Pdv() {
                 </i>
                 <AsyncSelect
                   id="#digite-produto"
+                  ref={inputProduct}
                   loadOptions={searchItem}
                   className="w-full text-2xl focus:outline-none"
                   placeholder="Pesquise o produto..."
@@ -144,6 +100,7 @@ function Pdv() {
                       border: "none",
                       background: "transparent",
                       borderColor: state.isFocused ? "green" : "red",
+                      boxShadow:'none'
                     }),
                     input: (baseStyles, state) => ({
                       ...baseStyles,
@@ -159,7 +116,7 @@ function Pdv() {
                       // '& div:hover': {
                       //   backgroundColor: 'red',
                       // },
-                      color: "red",
+                      color: theme.colors.warning,
                     }),
                     singleValue: (provided) => ({
                       ...provided,
@@ -189,7 +146,10 @@ function Pdv() {
                 QUANTIDADE
               </label>
               <NumericFormat
-                id="#digite-quant"
+                id="digite-quant"
+                getInputRef={(inputElement: any) => {
+                  inputQuant.current = inputElement;
+                }}
                 className="w-32 text-4xl focus:outline-none"
                 style={{ background: "transparent", border: "none" }}
                 type={"text"}
@@ -198,10 +158,10 @@ function Pdv() {
                 prefix={""}
                 fixedDecimalScale={true}
                 decimalScale={3}
-                onChange={(e) =>
-                  setOrderItem({ ...orderItem, quantitySale: Number(e.target.value.replaceAll(",", ".")) })
-                }
-                value={orderItem.quantitySale==0?null:orderItem.quantitySale}
+                onChange={(e) => {
+                  setOrderItem({ ...orderItem, quantitySale: Number(e.target.value.replaceAll(",", ".")) });
+                }}
+                value={orderItem.quantitySale == 0 ? "" : orderItem.quantitySale}
                 onKeyDown={(event) => event.key == "Enter" && saleItem()}
               />
             </div>
@@ -221,9 +181,10 @@ function Pdv() {
                 dataType=""
                 width={70}
                 cssClass="font-bold column-1"
-                cellRender={(e) => <span>{orderSale.products.length+e.rowIndex}</span>}
+                cellRender={(e) => <span>{e.rowIndex + 1}</span>}
               />
               <Column dataField="product.name" caption="DESCRIÇÃO" cssClass="font-bold" />
+              <Column dataField="product.measure" caption="MED" cssClass="font-bold" width={50} alignment="center" />
               <Column
                 dataField="quantitySale"
                 caption="QUANTIDADE"
@@ -247,10 +208,13 @@ function Pdv() {
                 dataType="number"
                 cssClass="font-bold"
                 format={{ type: "fixedPoint", precision: 2 }}
-                width={150}
+                width={120}
                 cellRender={(e) => {
-                  console.log(e)
-                  return <span>{UtilsConvert.formatCurrency(e.data.quantitySale * e.data.priceSale)}</span>;
+                  return (
+                    <span>
+                      {UtilsConvert.formatCurrency(e.data.quantitySale * e.data.priceSale).replaceAll("R$", "")}
+                    </span>
+                  );
                 }}
               />
             </DataGridDefault>
@@ -281,7 +245,7 @@ function Pdv() {
             <div className="w-full flex items-center justify-between">
               <label htmlFor="">SALDO À PAGAR</label>
               <label htmlFor="" className="text-3xl">
-                {UtilsConvert.formatCurrency(saldoPagar)}
+                {UtilsConvert.formatCurrency(0)}
               </label>
             </div>
           </header>
@@ -297,12 +261,17 @@ function Pdv() {
                   labelInferior="DINHEIRO"
                   onClick={handleF2}
                 />
-                <ButtonPdv labelSuperior="F4" icon={<MdAttachMoney className="text-xl" />} labelInferior="PIX" />
+                <ButtonPdv
+                  labelSuperior="F4"
+                  icon={<MdAttachMoney className="text-xl" />}
+                  labelInferior="PIX"
+                  onClick={handleF4}
+                />
                 <ButtonPdv
                   labelSuperior="F8"
                   icon={<FaMoneyCheck className="text-xl" />}
                   labelInferior="Finalizar"
-                  onClick={handleF4}
+                  onClick={handleF8}
                 />
                 <ButtonPdv
                   labelSuperior="F10"
@@ -327,9 +296,8 @@ function Pdv() {
           </div>
           <footer className="flex h-16">
             <div className="w-3/5 p-2" style={{ backgroundColor: theme.colors.info }}>
-              {tipoPagamento !== -1 && tipoPagamento !== 3 ? (
+              {/* {tipoPagamento !== -1 && tipoPagamento !== 3 ? (
                 <>
-                  {/* <a href="javascript:window.print();"> este</a> */}
                   <p className="text-xs lg:text-lg">
                     {tipoPagamento === 0 ? "DINHEIRO" : tipoPagamento === 2 ? "VALE" : "CARTÃO"}
                   </p>
@@ -339,7 +307,7 @@ function Pdv() {
                 </>
               ) : (
                 <></>
-              )}
+              )} */}
             </div>
             <button className="w-2/5 font-bold button-pagamento" style={{ backgroundColor: theme.colors.success }}>
               <p className="text-xs lg:text-lg">CONFIRMAR</p>
@@ -367,8 +335,15 @@ function Pdv() {
         </p>
       </DialogPopupConfirme>
       {/* <ModalLoad mensage="carregar notas..." isOpen={showPoup} onRequestClose={() => setShowPopup(false)}/> */}
-      <ModalProduto showModal={showModalProd} closeModal={() => setShowModalProd(false)} />
-      <ModalVenda showModal={showModalVenda} closeModal={() => setShowModalVenda(false)} />
+      {/* <ModalProduto showModal={showModalProd} closeModal={() => setShowModalProd(false)} /> */}
+      <ModalVenda showModal={showModalVenda} closeModal={() => setShowModalVenda(false)} sales={sales}/>
+      <ModalCancelamento
+        isOpen={showModalCancel}
+        onClose={() => setShowModalCancel(false)}
+        orderSale={orderSale}
+        setOrderSale={setOrderSale}
+        onSave={saveOrder}
+      />
 
       {/* modal de pagamento */}
       <ModalPayment isOpen={showPoupFechamento} onClose={() => setShowPoupFechamento(false)} />

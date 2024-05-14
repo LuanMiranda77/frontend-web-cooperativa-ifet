@@ -5,6 +5,7 @@ import { UserAplicationType } from "./user_aplication";
 export type OrderSaleType = {
   id: number | null;
   pagamento: EnumTypePayment;
+  valorLiquido: number;
   valorTotal: number;
   valorDesconto: number;
   status: EnumStatusOrder;
@@ -14,9 +15,10 @@ export type OrderSaleType = {
   dateClose?: Date;
 };
 
-export const initialOrderSales: OrderSaleType = {
+export const initialOrderSale: OrderSaleType = {
   id: null,
   pagamento: EnumTypePayment.DINHEIRO,
+  valorLiquido: 0,
   valorTotal: 0,
   valorDesconto: 0,
   status: EnumStatusOrder.PENDENTE,

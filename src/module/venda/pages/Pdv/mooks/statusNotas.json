@@ -1,8 +1,8 @@
 {
-    "tipos":[
-        {"value":"", "label":"TODAS AS NOTAS"},
-        {"value":"A", "label":"AUTORIZADA"},
-        {"value":"P", "label":"PENDENTE"},
-        {"value":"C", "label":"CANCELADA"}
-    ]
+  "tipos": [
+    { "value": "", "label": "TODAS AS NOTAS" },
+    { "value": "FINALIZADO", "label": "FINALIZADA" },
+    { "value": "PENDENTE", "label": "PENDENTE" },
+    { "value": "CANCELADO", "label": "CANCELADA" }
+  ]
 }

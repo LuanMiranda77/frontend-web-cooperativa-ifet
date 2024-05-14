@@ -1,10 +1,4 @@
-import { CircularProgress } from "@mui/material";
-import DataGrid, {
-  GroupPanel,
-  IColumnProps,
-  Pager,
-  Paging,
-} from "devextreme-react/data-grid";
+import DataGrid, { GroupPanel, IColumnProps, Pager, Paging } from "devextreme-react/data-grid";
 import { Selection } from "devextreme-react/tree-list";
 import React, { useState } from "react";
 import { InputSearch } from "../../Inputs/InputSearch";
@@ -38,6 +32,7 @@ interface DataGridDefaultProps {
   onInitialized?: (element: any) => void;
   onInitNewRow?: (element: any) => void;
   onEditorPrepared?: (element: any) => void;
+  height?: string;
 
   // styleCellColumn?: (data: any)=> React.ReactNode;
 }
@@ -49,46 +44,43 @@ export const DataGridDefault: React.FC<DataGridDefaultProps> = (props) => {
     gridInstance?.option("searchPanel", { visible: false, text: text });
   };
   return (
-    <Container>
+    <Container style={{ height: props.height ? props.height : "100%" }}>
       {props.isSearch && (
         <Header className="flex bg-white justify-between items-center p-2">
           <div className={props.cssSearch}>
-            <InputSearch
-              onChange={(e) => onSearch(e.currentTarget.value)}
-              autoFocus
-            />
+            <InputSearch onChange={(e) => onSearch(e.currentTarget.value)} autoFocus />
           </div>
           {props.headerChildren}
         </Header>
       )}
-      
-        <DataGrid
-          id="gridContainer"
-          dataSource={props.dataSource}
-          allowColumnReordering={true}
-          rowAlternationEnabled={props.rowAlternationEnabled}
-          showBorders={props.showBorders}
-          showRowLines={props.showRowLines}
-          showColumnLines={props.showColumnLines}
-          hoverStateEnabled={props.hoverStateEnabled}
-          height={"100%"}
-          onSelectionChanged={props.onSelectionChanged}
-          onInitialized={(e) => setGridInstance(e.component)}
-          onInitNewRow={props.onInitNewRow}
-          onEditorPrepared={props.onEditorPrepared}
-          onRowClick={props.onRowClick}
-          onRowDblClick={props.onRowDblClick}
-          onCellPrepared={props.onCellPrepared}
-          noDataText={"Sem dados para carregar..."}
-          // dateSerializationFormat='dd/MM/yyyyTHH:mm:ss'
-        >
-          {props.isSelectRow ? <Selection mode={props.moduloSeletion} /> : null}
-          <GroupPanel visible={props.columnGroup} />
-          {/* <SearchPanel visible={props.isSearch} /> */}
-          {/* <Grouping autoExpandAll={true} /> */}
-          {props.children}
 
-          {/* {props.columns.map((column, key) => {
+      <DataGrid
+        id="gridContainer"
+        dataSource={props.dataSource}
+        allowColumnReordering={true}
+        rowAlternationEnabled={props.rowAlternationEnabled}
+        showBorders={props.showBorders}
+        showRowLines={props.showRowLines}
+        showColumnLines={props.showColumnLines}
+        hoverStateEnabled={props.hoverStateEnabled}
+        height={"100%"}
+        onSelectionChanged={props.onSelectionChanged}
+        onInitialized={(e) => setGridInstance(e.component)}
+        onInitNewRow={props.onInitNewRow}
+        onEditorPrepared={props.onEditorPrepared}
+        onRowClick={props.onRowClick}
+        onRowDblClick={props.onRowDblClick}
+        onCellPrepared={props.onCellPrepared}
+        noDataText={"Sem dados para carregar..."}
+        // dateSerializationFormat='dd/MM/yyyyTHH:mm:ss'
+      >
+        {props.isSelectRow ? <Selection mode={props.moduloSeletion} /> : null}
+        <GroupPanel visible={props.columnGroup} />
+        {/* <SearchPanel visible={props.isSearch} /> */}
+        {/* <Grouping autoExpandAll={true} /> */}
+        {props.children}
+
+        {/* {props.columns.map((column, key) => {
         return <Column
           key={key}
           dataField={column.dataField}
@@ -109,15 +101,9 @@ export const DataGridDefault: React.FC<DataGridDefaultProps> = (props) => {
 
       })} */}
 
-          <Paging
-            defaultPageSize={props.defaultPageSize}
-            enabled={props.paginar}
-          />
-          <Pager
-            allowedPageSizes={props.pageSizes}
-            showPageSizeSelector={true}
-          />
-        </DataGrid>
+        <Paging defaultPageSize={props.defaultPageSize} enabled={props.paginar} />
+        <Pager allowedPageSizes={props.pageSizes} showPageSizeSelector={true} />
+      </DataGrid>
     </Container>
   );
 };
