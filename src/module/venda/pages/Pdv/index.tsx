@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import {
   FaBarcode,
   FaFileInvoice,
@@ -19,8 +19,8 @@ import AsyncSelect from "react-select/async";
 import { usePDV } from "../../../../hooks/usePDV";
 import { HeaderPDV } from "./components/HeaderPDV";
 import ModalCancelamento from "./components/ModalCancelamento";
-import ModalPayment from "./components/ModalPaymant";
 import ModalVenda from "./components/ModalListVendas";
+import ModalPayment from "./components/ModalPaymant";
 import { Container, ContainerLeft, ContainerMenu, ContainerProduto, ContainerRight } from "./styles";
 /**
  *@Author Luan Miranda
@@ -58,9 +58,10 @@ function Pdv() {
     inputProduct,
     inputQuant,
     saveOrder,
+    setFocusInputProduct,
+    loadOrder,
   } = usePDV();
   const navigate = useNavigate();
-
 
   return (
     <Container>
@@ -100,7 +101,7 @@ function Pdv() {
                       border: "none",
                       background: "transparent",
                       borderColor: state.isFocused ? "green" : "red",
-                      boxShadow:'none'
+                      boxShadow: "none",
                     }),
                     input: (baseStyles, state) => ({
                       ...baseStyles,
@@ -145,25 +146,27 @@ function Pdv() {
               <label htmlFor="" className="text-sm">
                 QUANTIDADE
               </label>
-              <NumericFormat
-                id="digite-quant"
-                getInputRef={(inputElement: any) => {
-                  inputQuant.current = inputElement;
-                }}
-                className="w-32 text-4xl focus:outline-none"
-                style={{ background: "transparent", border: "none" }}
-                type={"text"}
-                thousandSeparator={false}
-                decimalSeparator={","}
-                prefix={""}
-                fixedDecimalScale={true}
-                decimalScale={3}
-                onChange={(e) => {
-                  setOrderItem({ ...orderItem, quantitySale: Number(e.target.value.replaceAll(",", ".")) });
-                }}
-                value={orderItem.quantitySale == 0 ? "" : orderItem.quantitySale}
-                onKeyDown={(event) => event.key == "Enter" && saleItem()}
-              />
+              <form autoComplete="off">
+                <NumericFormat
+                  id="digite-quant"
+                  getInputRef={(inputElement: any) => {
+                    inputQuant.current = inputElement;
+                  }}
+                  className="w-32 text-4xl focus:outline-none"
+                  style={{ background: "transparent", border: "none" }}
+                  type={"text"}
+                  thousandSeparator={false}
+                  decimalSeparator={","}
+                  prefix={""}
+                  fixedDecimalScale={true}
+                  decimalScale={3}
+                  onChange={(e) => {
+                    setOrderItem({ ...orderItem, quantitySale: Number(e.target.value.replaceAll(",", ".")) });
+                  }}
+                  value={orderItem.quantitySale == 0 ? "" : orderItem.quantitySale}
+                  onKeyDown={(event) => event.key == "Enter" && saleItem()}
+                />
+              </form>
             </div>
           </div>
           <ContainerProduto>
@@ -243,10 +246,8 @@ function Pdv() {
         <ContainerRight>
           <header className="h-12" style={{ backgroundColor: theme.colors.info }}>
             <div className="w-full flex items-center justify-between">
-              <label htmlFor="">SALDO À PAGAR</label>
-              <label htmlFor="" className="text-3xl">
-                {UtilsConvert.formatCurrency(0)}
-              </label>
+              <span>SALDO À PAGAR</span>
+              <span className="text-2xl">{UtilsConvert.formatCurrency(orderSale.valorTotal)}</span>
             </div>
           </header>
           <div className="shadow-lg">
@@ -334,9 +335,16 @@ function Pdv() {
           Esta venda ficará pendente ao sair da tela!
         </p>
       </DialogPopupConfirme>
-      {/* <ModalLoad mensage="carregar notas..." isOpen={showPoup} onRequestClose={() => setShowPopup(false)}/> */}
-      {/* <ModalProduto showModal={showModalProd} closeModal={() => setShowModalProd(false)} /> */}
-      <ModalVenda showModal={showModalVenda} closeModal={() => setShowModalVenda(false)} sales={sales}/>
+
+      <ModalVenda
+        showModal={showModalVenda}
+        closeModal={() => {
+          setFocusInputProduct();
+          setShowModalVenda(false);
+        }}
+        loadData={loadOrder}
+        sales={sales}
+      />
       <ModalCancelamento
         isOpen={showModalCancel}
         onClose={() => setShowModalCancel(false)}
@@ -346,7 +354,13 @@ function Pdv() {
       />
 
       {/* modal de pagamento */}
-      <ModalPayment isOpen={showPoupFechamento} onClose={() => setShowPoupFechamento(false)} />
+      <ModalPayment
+        isOpen={showPoupFechamento}
+        onClose={() => setShowPoupFechamento(false)}
+        orderSale={orderSale}
+        setOrderSale={setOrderSale}
+        onSave={saveOrder}
+      />
     </Container>
   );
 }

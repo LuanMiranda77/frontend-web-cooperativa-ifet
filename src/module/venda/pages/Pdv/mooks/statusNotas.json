@@ -2,7 +2,6 @@
   "tipos": [
     { "value": "", "label": "TODAS AS NOTAS" },
     { "value": "FINALIZADO", "label": "FINALIZADA" },
-    { "value": "PENDENTE", "label": "PENDENTE" },
     { "value": "CANCELADO", "label": "CANCELADA" }
   ]
 }

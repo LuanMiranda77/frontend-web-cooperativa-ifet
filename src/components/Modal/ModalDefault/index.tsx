@@ -28,6 +28,8 @@ interface ModalDefaultProps {
   onRequestClose: () => void;
   onClickAction?: () => void;
   isFullScreen?: boolean;
+  isNotBtnCancel?:boolean;
+  isNotBtnConfirmed?:boolean;
 }
 
 export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
@@ -99,15 +101,15 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
           {props.children}
         </DialogContent>
         <DialogActions sx={{ border: "1px solid silver", p: 1.8 }}>
-          <ButtonBase
+          {!props.isNotBtnCancel &&<ButtonBase
             label="Cancelar"
             model="btn_line"
             className="primary-color mr-5  w-32"
             size="large"
             onClick={props.onRequestClose}
-          />
+          />}
 
-          {props.textBtnAction !== "Salvar" ? (
+          {props.textBtnAction !== "Salvar" && !props.isNotBtnConfirmed ? (
             <ButtonBase
               label={props.textBtnAction ? props.textBtnAction : "Salvar"}
               model="btn_base"
@@ -117,7 +119,7 @@ export const ModalDefault: React.FC<ModalDefaultProps> = (props) => {
               type="submit"
             />
           ) : (
-            <ButtonIcon
+            !props.isNotBtnConfirmed && <ButtonIcon
               className="mr-3 w-32 font-12"
               label={props.textBtnAction ? props.textBtnAction : "Salvar"}
               icon={<FaSave />}
