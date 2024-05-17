@@ -24,7 +24,7 @@ interface Props {
 const ListProductConf: React.FC<Props> = (props) => {
   const { title, colors } = useContext(ThemeContext);
   const [show, setShow] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
+  const [isEdit, setIsEdit] = useState(-1);
   const [isEditPrice, setIsEditPrice] = useState(false);
   const [discrepancy, setDiscrepancy] = useState<string>("");
   const [index, setIndex] = useState<number>(-1);
@@ -48,7 +48,7 @@ const ListProductConf: React.FC<Props> = (props) => {
 
   function editProductDerivado(index: number) {
     Object.assign(props.products[index], productSelected);
-    setIsEdit(false);
+    setIsEdit(-1);
   }
 
   function alterDiscrepancy(index: number) {
@@ -65,11 +65,11 @@ const ListProductConf: React.FC<Props> = (props) => {
         overflowY: "auto",
       }}
     >
-      {props.products.map((e: ProductType, i) => (
+      {props.products.map((e: ProductType, i:number) => (
         <div className="w-100 h-16 my-2 rounded-xl flex items-center px-4" style={{ background: colors.gray }}>
           <div className={`${props.process?.status === EnumStatusProcess.CAPITACAO ? "w-4/12" : "w-6/12"}`}>
             <p className="font-bold">Nome</p>
-            {isEdit && !isEditPrice ? (
+            {isEdit === i && !isEditPrice ? (
               <input
                 className="px-1"
                 value={productSelected?.name}
@@ -81,7 +81,7 @@ const ListProductConf: React.FC<Props> = (props) => {
           </div>
           <div className="w-1/12">
             <p className="font-bold">Med</p>
-            {isEdit && !isEditPrice ? (
+            {isEdit === i && !isEditPrice ? (
               <select
                 className="w-16 h-6"
                 value={productSelected.measure}
@@ -97,7 +97,7 @@ const ListProductConf: React.FC<Props> = (props) => {
           </div>
           <div className="w-2/12">
             <p className="font-bold">Quant.</p>
-            {isEdit && !isEditPrice ? (
+            {isEdit === i && !isEditPrice ? (
               <InputNumber
                 label=""
                 casaDecimal={3}
@@ -119,7 +119,7 @@ const ListProductConf: React.FC<Props> = (props) => {
           {props.process?.status === EnumStatusProcess.CAPITACAO && (
             <div className="w-2/12">
               <p className="font-bold">Preço</p>
-              {isEdit && isEditPrice ? (
+              {isEdit === i && isEditPrice ? (
                 <InputNumber
                   label=""
                   casaDecimal={2}
@@ -144,7 +144,7 @@ const ListProductConf: React.FC<Props> = (props) => {
             <span>{e?.discrepancy ? e?.discrepancy : "-"}</span>
           </div>
           <div className="flex items-center justify-between text-center w-16">
-            {isEdit ? (
+            {isEdit === i ? (
               <FaRegSave
                 className="btn cursor-pointer"
                 title="Salvar edição"
@@ -160,7 +160,7 @@ const ListProductConf: React.FC<Props> = (props) => {
                   color={colors.info}
                   onClick={() => {
                     setProductSelect(e);
-                    setIsEdit(true);
+                    setIsEdit(i);
                     props.process?.status == EnumStatusProcess.CAPITACAO && setIsEditPrice(true);
                   }}
                   size={20}

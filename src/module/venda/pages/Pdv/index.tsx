@@ -332,7 +332,7 @@ function Pdv() {
       >
         <p className="font-bold text-2xl">Tem certeza que deseja sair da venda? </p>
         <p className="font-bold" style={{ color: theme.colors.error }}>
-          Esta venda ficará pendente ao sair da tela!
+          Esta venda será perdida ao sair da tela!
         </p>
       </DialogPopupConfirme>
 

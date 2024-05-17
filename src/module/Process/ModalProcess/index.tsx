@@ -209,6 +209,7 @@ const ModalProcess: React.FC<Props> = (props) => {
                   value={optionSetores.find((e: any) => e.value === props.process.setor)}
                   onChange={(e) => props.setProcess({ ...props.process, setor: e.value })}
                   required
+                  autoFocus
                 />
               </div>
               <TitleDivider className="pt-10 " title="Dados da matéria prima" />
@@ -287,6 +288,7 @@ const ModalProcess: React.FC<Props> = (props) => {
                     if (e == null) {
                       props.setProduct(initialProduct);
                     } else {
+                      e.balance=0;
                       const obj = {
                         id: e.value,
                         name: e.label,
