@@ -22,6 +22,7 @@ import ModalCancelamento from "./components/ModalCancelamento";
 import ModalVenda from "./components/ModalListVendas";
 import ModalPayment from "./components/ModalPaymant";
 import { Container, ContainerLeft, ContainerMenu, ContainerProduto, ContainerRight } from "./styles";
+import { FaPix } from "react-icons/fa6";
 /**
  *@Author Luan Miranda
  *@Issue 15
@@ -264,7 +265,7 @@ function Pdv() {
                 />
                 <ButtonPdv
                   labelSuperior="F4"
-                  icon={<MdAttachMoney className="text-xl" />}
+                  icon={<FaPix  className="text-xl" />}
                   labelInferior="PIX"
                   onClick={handleF4}
                 />
