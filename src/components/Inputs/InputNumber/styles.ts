@@ -1,26 +1,22 @@
 import styled from "styled-components";
 
-interface InputPorps{
+interface InputPorps {
   color?: string;
+  typeStyle?: boolean;
 }
 
-export const Container  = styled.div<InputPorps>`
-
-    //adicionar stylos
+export const Container = styled.div<InputPorps>`
+  //adicionar stylos
 
   position: relative;
-  padding: 10px 5px;
-  margin-top: 5px;
+  padding: ${(props) => (props.typeStyle ? "0px" : "10px 5px")};
+  margin-top: ${(props) => (props.typeStyle ? "0px" : "5px")};
 
-  label{
-    color:color
+  label {
+    color: color;
   }
 
-
-
-@media screen and (max-width: 40em) {
+  @media screen and (max-width: 40em) {
     //adicionar o stylo responsivo
-}
-
+  }
 `;
-

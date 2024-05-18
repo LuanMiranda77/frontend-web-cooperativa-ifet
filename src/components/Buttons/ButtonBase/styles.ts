@@ -83,7 +83,7 @@ export const Container  = styled.div`
     transform: translateX(2px) translateY(-2px);
     opacity : 0.9;
     box-shadow: 0px 4px 8px 0 rgba(0,0,0,0.5);
-    background-color: ${color => color.theme.title==='dark' ? color.theme.colors.gray : color.theme.colors.dns_info};
+    background-color: ${color => color.theme.title==='dark' ? color.theme.colors.gray : color.theme.colors.dns_success};
   }
 }
 

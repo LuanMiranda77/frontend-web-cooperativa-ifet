@@ -25,9 +25,9 @@ export const DialogPopupConfirme: React.FC<DialogPoupConfirmeProps> = (props) =>
             backgroundColor: "rgba(78, 76, 76, 0.75)",
           },
           content: {
-            width: "40vw",
-            height: "35vh",
-            left: "30vw",
+            width: "400px",
+            height: "250px",
+            left: "45vw",
             top: "30vh",
             border: 0,
             padding: 0,
@@ -65,14 +65,14 @@ export const DialogPopupConfirme: React.FC<DialogPoupConfirmeProps> = (props) =>
             <ButtonBase
               label="Não"
               model="btn_base"
-              className="red-color  ml-20"
+              className="red-color"
               size="small"
               onClick={props.onRequestClose}
             />
             <ButtonBase
               label="Sim"
               model="btn_base"
-              className="primary-color mr-20"
+              className="primary-color"
               size="small"
               style={{ marginLeft: "50px" }}
               onClick={props.onClickSim}

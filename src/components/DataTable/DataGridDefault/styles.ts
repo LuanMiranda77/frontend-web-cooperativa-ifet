@@ -3,15 +3,15 @@ import styled from "styled-components";
 export const Container  = styled.div`
 
     //adicionar stylos
-    height: 100%;
+    /* height: 95%; */
     width: 100%;
 
     .dx-datagrid .dx-header-row > td {
         color: ${color => color.theme.colors.white};
         font-weight: bold;
         background-color: ${color => color.theme.colors.primary};;
-        border-top-right-radius: 5px;
-        border-top-left-radius: 5px;
+        /* border-top-right-radius: 5px;
+        border-top-left-radius: 5px; */
     }
    .dx-row.dx-data-row.dx-column-lines.dx-state-hover td {  
         background:  ${color => color.theme.colors.dns_info} !important;
@@ -41,12 +41,12 @@ export const Container  = styled.div`
 
     .dx-datagrid-rowsview .dx-selection.dx-row > td,  
     .dx-datagrid-rowsview .dx-selection.dx-row:hover > td {  
-        background-color: ${color => color.theme.colors.dns_info} !important;  
+        background-color: ${color => '#d2d2d2'} !important;  
         color: #232323;  
     }  
 
     .dx-datagrid-table .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row) > td:not(.dx-focused) {  
-    background-color: ${color => color.theme.colors.dns_info} !important;  
+    background-color: ${color =>'#d2d2d2'} !important;  
     color: #333;  
     }  
 

@@ -4,7 +4,7 @@ import { Container } from "./styles";
 interface InputBaseProps extends InputHTMLAttributes<HTMLInputElement> {
   //adicionar os props
   type: string;
-  model: "input_base"|"input_line"|"input_super";
+  model: "input_base" | "input_line" | "input_super";
   label: string;
 }
 
@@ -16,7 +16,7 @@ export const InputBase: React.FC<InputBaseProps> = (props) => {
           <input
             type={props.type}
             className={props.model + "__field " + props.className}
-            placeholder={props.model !=="input_base" ? props.label : props.placeholder}
+            placeholder={props.model !== "input_base" ? props.label : props.placeholder}
             name={props.label}
             id={props.label}
           />

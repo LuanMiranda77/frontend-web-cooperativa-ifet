@@ -24,6 +24,7 @@ interface InputSelectDefaultProps {
   fontSize?: string;
   control?: any;
   name?: string;
+  disabled?:boolean;
 }
 
 export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
@@ -41,7 +42,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
       // none of react-select's styles are passed to <Control />
       display: "flex",
       width: "100%",
-      height: props.height ? props.height : 25,
+      height: props.height ? props.height : 28,
       border: 0,
       borderBottom: "1px solid " + theme.colors.gray,
       // borderRadius: '0px 5px 5px 5px',
@@ -58,21 +59,21 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
       } ${props.className ? props.className : ""}`}
     >
       {props.label && (
-        <label className="input_line__label" htmlFor="">
+        <span className="input_line__label mb-1">
           {props.label}
           <span className="text-red-500 font-bold">
             {props.required ? " *" : ""}
           </span>
-        </label>
+        </span>
       )}
       {props.control && props.name ? (
         <Controller
           control={props.control}
           name={props.name}
-          defaultValue={props.options[0]}
+          defaultValue={props.defaultValue}
           render={({ field: { value, onChange, ref } }) => (
             <Select
-              defaultValue={props.options[0]}
+              // defaultValue={props.options[0]}
               id={"input-select" + props.label}
               className={"input font-14-responsive"}
               options={props.options}
@@ -87,13 +88,14 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
               ref={ref}
               value={_.find(props.options, { 'value':value })?_.find(props.options, { 'value':value }):value}
               onChange={(e)=>onChange(e.value)}
+              isDisabled={props.disabled}
             />
           )}
         />
       ) : (
         <Select
           id={"input-select" + props.label}
-          className={"input font-14-responsive"}
+          className={"input font-14-responsive mt-1"}
           options={props.options}
           placeholder={props.placeholder}
           isSearchable={props.isSearchable}
@@ -107,6 +109,7 @@ export const InputSelectDefault: React.FC<InputSelectDefaultProps> = (
           )}
           styles={customStyles}
           value={props.value}
+          isDisabled={props.disabled}
           // {...props.valid}
         />
       )}

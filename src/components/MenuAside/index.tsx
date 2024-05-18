@@ -24,44 +24,10 @@ export const MenuAside: React.FC<MenuAsideProps> = (props) => {
   useEffect(() => {
     let user = UtilsUserLocal.getTokenLogin();
     if (user.cargo === Cargo.MASTER) {
-      user.estabelecimento = 0;
+      user.setor= 0;
     }
     dispatch(load(user));
-    if (user.cargo !== Cargo.MASTER && user.cargo !== Cargo.REVENDA) {
-      validarUserPermissoes(user);
-    }
   }, []);
-
-  const validarUserPermissoes = (user: UserAplicationType) => {
-    let lista = [];
-    lista = menusValid.filter((menu: any) => {
-      if (menu.items) {
-        menu.items = menu.items.filter((sub: any) => {
-          if (sub.items) {
-            sub.items = sub.items.filter((sub2: any) => {
-              if (user.roles.includes(sub2.role)) {
-                return sub;
-              }
-            });
-            if (sub.items && sub.items.length > 0) {
-              return sub;
-            }
-          }
-          else if (user.roles.includes(sub.role)) {
-            return sub;
-          }
-        });
-
-        if (menu.items && menu.items.length > 0) {
-          return menu;
-        }
-      }
-      else if (user.roles.includes(menu.role)) {
-        return menu
-      }
-    });
-    setMenusValid(lista);
-  }
 
   const onSelectMenu = (item: any) => {
     let option = item.itemData.text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");

@@ -3,39 +3,42 @@ import { UserAplicationType } from '../../domain/types/user_aplication';
 import { RootState } from '../index.store';
 
 export const initialState = {
-    codigo:0,
-    nome: '',
+    id:0,
+    name: '',
     cpf:'',
     email: '',
-    dataCriacao: null ,
-    dataAtualizacao: null ,
+    dateCreate: null ,
+    dateUpdate: null ,
+    lastName:'',
     acesso: null,
     status: 'S',
     password:'',
     celular: '',
     cargo: null,
     roles: '',
-    estabelecimento: null,
-}as UserAplicationType
+    userName:'',
+    setor: null,
+    // isOpenModal:false
+}
 
 export const usuarioSlice = createSlice({
     name:'user-aplication',
     initialState: initialState, 
     reducers:{
-        load(state, action: PayloadAction<UserAplicationType>){
+        load(state, action: PayloadAction<any>){
             return state = {...action.payload}
         },
 
-        save(state, action: PayloadAction<UserAplicationType>){
-            state = {...action.payload}
+        saveUser(state, action: PayloadAction<any>){
+            return state = {...action.payload}
         },
 
         reset(state){
-            state = {...initialState};
+            return state = {...initialState};
         },
 
     }
 });
-export const {save, load,  reset } = usuarioSlice.actions;
+export const {saveUser, load,  reset } = usuarioSlice.actions;
 export const selectStateUser = (state: RootState) => state.userAplication;
 export default usuarioSlice.reducer;

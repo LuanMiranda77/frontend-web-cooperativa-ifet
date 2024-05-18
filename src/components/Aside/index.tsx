@@ -1,21 +1,22 @@
 import {
   FaCartArrowDown,
+  FaFileContract,
   FaShopify,
   FaSpeakap,
   FaStoreAlt,
   FaUserFriends,
 } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { Cargo } from "../../domain/enums";
+import { useDispatch } from "react-redux";
 import { reset } from "../../store/slices/menuUser.slice";
-import { selectStateUser } from "../../store/slices/usuario.slice";
+import { UtilsUserLocal } from "../../utils/utils_userLocal";
 import ButtonMenu from "../Buttons/ButtonMenu";
 import { Container, MenuContainer } from "./styles";
 
 export function Aside() {
   const dispatch = useDispatch();
-  const userAplication = useSelector(selectStateUser);
+  const userAplication = UtilsUserLocal.getTokenLogin();
 
+  console.log(userAplication);
   return (
     <Container
       onClick={() => {
@@ -23,73 +24,49 @@ export function Aside() {
       }}
     >
       <MenuContainer>
-        {userAplication.cargo === Cargo.CAIXA ||
-        userAplication.cargo === Cargo.ADMIN ||
-        userAplication.cargo === Cargo.MASTER ||
-        userAplication.cargo === Cargo.GERENTE ? (
+        {["MASTER", "VENDEDOR"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/venda"
             icon={<FaCartArrowDown className="btn-menu" />}
             label="Venda"
           />
-        ) : (
-          ""
         )}
-        {userAplication.cargo === Cargo.ESTOQUISTA ||
-        userAplication.cargo === Cargo.ADMIN ||
-        userAplication.cargo === Cargo.MASTER ||
-        userAplication.cargo === Cargo.GERENTE ? (
+        {["MASTER", "VENDEDOR"].indexOf(userAplication.cargo) !==
+          -1 && (
           <ButtonMenu
             link="/produto"
             icon={<FaShopify className="btn-menu" />}
             label="Estoque"
           />
-        ) : (
-          ""
         )}
-        {userAplication.cargo === Cargo.ADMIN ||
-        userAplication.cargo === Cargo.MASTER ||
-        userAplication.cargo === Cargo.GERENTE ? (
+        {["MASTER"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/financeiro"
             icon={<FaSpeakap className="btn-menu" />}
             label="Financeiro"
           />
-        ) : (
-          ""
         )}
-        {userAplication.cargo === Cargo.ESTOQUISTA ||
-        userAplication.cargo === Cargo.ADMIN ||
-        userAplication.cargo === Cargo.MASTER ||
-        userAplication.cargo === Cargo.GERENTE ? (
+        {["MASTER", "VENDEDOR", "CAPITADOR"].indexOf(userAplication.cargo) !==
+          -1 && (
           <ButtonMenu
-            link="/mde"
-            icon={<FaSpeakap className="btn-menu" />}
+            link="/process"
+            icon={<FaFileContract className="btn-menu" />}
             label="Processos"
           />
-        ) : (
-          ""
         )}
-        {userAplication.cargo === Cargo.ADMIN ||
-        userAplication.cargo === Cargo.MASTER ? (
+        {["MASTER"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
-            link="/estabelecimento"
+            link="/estabelecimentos"
             icon={<FaStoreAlt className="btn-menu" />}
             label="Setores"
           />
-        ) : (
-          ""
         )}
-        {userAplication.cargo === Cargo.ADMIN ||
-        userAplication.cargo === Cargo.MASTER ||
-        userAplication.cargo === Cargo.GERENTE ? (
+        {["MASTER"].indexOf(userAplication.cargo) !== -1 && (
           <ButtonMenu
             link="/usuario"
             icon={<FaUserFriends className="btn-menu" />}
             label="Usuários"
           />
-        ) : (
-          ""
         )}
       </MenuContainer>
     </Container>

@@ -34,55 +34,55 @@ export const InputSelectEstabelecimento: React.FC<InputSelectEstabelecimentoProp
   const estabelecimentos = useSelector(selectStateEstabelecimentos);
   const { colors, title } = useContext(ThemeContext);
 
-  useEffect(() => {
-    setModalShow(true);
-    let user = UtilsUserLocal.getTokenLogin();
-    if (user.cargo == Cargo.MASTER || user.cargo == Cargo.REVENDA) {
-      user.estabelecimento = 0;
-      let est =  persistLocalStorage('@selected-est', "", 'get');
-      dispatch(load(est));
-    }else{
-      persistLocalStorage('@selected-est', "", 'remove');
-    }
-    api.get(`api/estabelecimento/estabelecimentos/${user.estabelecimento}/${user.cargo}`).then(resp => {
+  // useEffect(() => {
+  //   setModalShow(true);
+  //   let user = UtilsUserLocal.getTokenLogin();
+  //   if (user.cargo == Cargo.MASTER || user.cargo == Cargo.REVENDA) {
+  //     user.setor = 0;
+  //     let est =  persistLocalStorage('@selected-est', "", 'get');
+  //     dispatch(load(est));
+  //   }else{
+  //     persistLocalStorage('@selected-est', "", 'remove');
+  //   }
+  //   api.get(`api/estabelecimento/estabelecimentos/${user.setor}/${user.cargo}`).then(resp => {
 
-      if(typeof resp.data === 'string'){
-        UtilsUserLocal.logout();
-      }
-      resp.data = [..._.orderBy(resp.data,['nome'], ['asc'])];
-      if (resp.data.length === 1) {
-        dispatch(load(resp.data[0]));
-      } 
-      else {
-        let lista = new Array<any>();
-        resp.data.forEach((estabelecimento: EstabelecimentoType) => {
-          lista.push({
-            label: estabelecimento.matrizId == null ?
-              estabelecimento.nome :
-              estabelecimento.matrizId === "0" ?
-                estabelecimento.nome + ' - MATRIZ' :
-                estabelecimento.nome + ' - FILIAL',
-            value: estabelecimento.id
-          })
-        });
-        setOptions(lista);
-        dispatch(loadEstabelecimentos(resp.data));
-      }
-      setModalShow(false);
-      return options;
-    }).catch(error => {
-      console.log(error.response.data);
-        UtilsUserLocal.logout();
-        navegate("/");
-      return toast.error(UtilsGeral.getEmoji(2) + " " + error.response.data.message);
-    });
-  }, [selectedEstabelecimento])
+  //     if(typeof resp.data === 'string'){
+  //       UtilsUserLocal.logout();
+  //     }
+  //     resp.data = [..._.orderBy(resp.data,['nome'], ['asc'])];
+  //     if (resp.data.length === 1) {
+  //       dispatch(load(resp.data[0]));
+  //     } 
+  //     else {
+  //       let lista = new Array<any>();
+  //       resp.data.forEach((estabelecimento: EstabelecimentoType) => {
+  //         lista.push({
+  //           label: estabelecimento.matrizId == null ?
+  //             estabelecimento.nome :
+  //             estabelecimento.matrizId === "0" ?
+  //               estabelecimento.nome + ' - MATRIZ' :
+  //               estabelecimento.nome + ' - FILIAL',
+  //           value: estabelecimento.id
+  //         })
+  //       });
+  //       setOptions(lista);
+  //       dispatch(loadEstabelecimentos(resp.data));
+  //     }
+  //     setModalShow(false);
+  //     return options;
+  //   }).catch(error => {
+  //     console.log(error.response.data);
+  //       UtilsUserLocal.logout();
+  //       navegate("/");
+  //     return toast.error(UtilsGeral.getEmoji(2) + " " + error.response.data.message);
+  //   });
+  // }, [selectedEstabelecimento])
 
   const onSelect = (event: any) => {
     let selectEstabelecimento = _.find(estabelecimentos, { 'id': event.value });
     if (selectEstabelecimento) {
       let user = UtilsUserLocal.getTokenLogin();
-      if (user.cargo == Cargo.MASTER || user.cargo == Cargo.REVENDA) {
+      if (user.cargo == Cargo.MASTER) {
           persistLocalStorage('@selected-est', selectEstabelecimento, 'set');
       }
       dispatch(load(selectEstabelecimento));
@@ -110,7 +110,7 @@ export const InputSelectEstabelecimento: React.FC<InputSelectEstabelecimentoProp
       />
       :
       <div className='ml-1' style={{marginTop:'-3px'}}>
-        <p className='text-lg font-bold' style={{color: colors.textLabel}}>{estabelecimento.nome}</p>
+        <p className='text-lg font-bold' style={{color: colors.textLabel}}>{estabelecimento.name}</p>
         <p className='text-xs' style={{color: colors.warning}}>CNPJ/CPF: {estabelecimento.cnpjCpf}</p>
       </div>
     }
