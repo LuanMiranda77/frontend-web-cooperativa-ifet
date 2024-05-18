@@ -1,13 +1,14 @@
+import { ProcessType } from "./../../domain/types/processType";
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useContext, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { ThemeContext } from "styled-components";
 import { api } from "../../config/api";
+import { Cargo, EnumStatusProcess } from "../../domain/enums";
 import { FeedstockType, initialFeedstock } from "../../domain/types/feedstock";
-import { ProcessType, initialProcess } from "../../domain/types/processType";
+import { initialProcess } from "../../domain/types/processType";
 import { ProductType, initialProduct } from "../../domain/types/productType";
-import { selectStateUser } from "../../store/slices/usuario.slice";
+import { UtilsUserLocal } from "../../utils/utils_userLocal";
 
 export default function UseProcess() {
   const { title, colors } = useContext(ThemeContext);
@@ -17,19 +18,39 @@ export default function UseProcess() {
   const [feedstock, setFeedstock] = useState(initialFeedstock);
   const [product, setProduct] = useState(initialProduct);
   const [products, setProducts] = useState(new Array<ProductType>());
-  const responsibleUser = useSelector(selectStateUser);
+  const actualUser = UtilsUserLocal.getTokenLogin();
   const [showModal, setShowModal] = useState(false);
   const [dialog, setDialog] = useState(false);
   const [process, setProcess] = useState<ProcessType>(initialProcess);
   const url = "api/process";
 
-  function hanldeSave() {}
+  function onNovoProcess() {
+    if (actualUser.cargo === Cargo.CAPITADOR) {
+      setProcess((old) => {
+        return { ...old, setor: actualUser.setor };
+      });
+    } else {
+      setProcess(initialProcess);
+    }
+    setFeedstock(initialFeedstock);
+    setProduct(initialProduct);
+    setProducts([]);
+    setShowModal(true);
+  }
 
   function loadData() {
+    let query = "api/process";
+    if (actualUser.cargo === Cargo.CAPITADOR) {
+      query = `api/process/filter-setor?setorId=${actualUser.setor}`;
+    }
     api
-      .get(url)
+      .get(query)
       .then((e) => {
-        setDataSource(e.data);
+        if (actualUser.cargo === Cargo.VENDEDOR) {
+          setDataSource(e.data.filter((process: ProcessType) => process.status !== EnumStatusProcess.RASCUNHO));
+        } else {
+          setDataSource(e.data);
+        }
       })
       .catch((e) => toast.error("Erro:" + e));
   }
@@ -88,7 +109,7 @@ export default function UseProcess() {
       return product;
     });
     process.status = status;
-    process.responsibleUser = responsibleUser.id ? responsibleUser.id : 0;
+    process.responsibleUser = actualUser.id ? actualUser.id : 0;
 
     if (process.id == null) {
       api
@@ -168,8 +189,8 @@ export default function UseProcess() {
     setProduct,
     products,
     setProducts,
-    responsibleUser,
-    hanldeSave,
+    actualUser,
+    onNovoProcess,
     showModal,
     setShowModal,
     loadData,

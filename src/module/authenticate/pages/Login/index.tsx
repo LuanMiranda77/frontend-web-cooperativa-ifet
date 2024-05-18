@@ -14,6 +14,7 @@ import { SizeLogo } from "../../../../domain/enums";
 import { RootState } from "../../../../store/index.store";
 import { UsuarioService } from "../services/usuarioService";
 import { Container } from "./styles";
+import { load } from "../../../../store/slices/usuario.slice";
 
 function Login() {
   const theme = useContext(ThemeContext);
@@ -39,7 +40,7 @@ function Login() {
           return;
         }
         // console.log(response);
-        // dispatch(load(response));
+        dispatch(load(response));
         window.location.reload();
       })
       .catch((error) => {

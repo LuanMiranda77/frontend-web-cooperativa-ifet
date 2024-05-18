@@ -14,11 +14,8 @@ import ModalProcess from "./ModalProcess";
 
 const Process: React.FC = () => {
   const {
-    title,
     colors,
-    initialProcess,
-    initialFeedstock,
-    initialProduct,
+
     dataSource,
     process,
     setProcess,
@@ -28,7 +25,7 @@ const Process: React.FC = () => {
     setProduct,
     products,
     setProducts,
-    responsibleUser,
+    actualUser,
     showModal,
     setShowModal,
     loadFeedstockName,
@@ -43,6 +40,7 @@ const Process: React.FC = () => {
     deleteProcess,
     dialog,
     setDialog,
+    onNovoProcess,
   } = UseProcess();
 
   const setores = useSelector(selectStateEstabelecimentos);
@@ -64,21 +62,19 @@ const Process: React.FC = () => {
             isSearch
             cssSearch="w-11/12"
             headerChildren={
-              <div className="w-1/12 mr-2">
-                <ButtonIcon
-                  borderColor={colors.primary}
-                  label="Novo"
-                  icon={<FaPlus />}
-                  width={"100%"}
-                  onClick={() => {
-                    setFeedstock(initialFeedstock);
-                    setProduct(initialProduct);
-                    setProducts([]);
-                    setProcess(initialProcess);
-                    setShowModal(true);
-                  }}
-                />
-              </div>
+              actualUser.cargo !== Cargo.VENDEDOR && (
+                <div className="w-32">
+                  <ButtonIcon
+                    borderColor={colors.primary}
+                    label="Novo"
+                    icon={<FaPlus />}
+                    width={"100%"}
+                    onClick={() => {
+                      onNovoProcess();
+                    }}
+                  />
+                </div>
+              )
             }
             dataSource={dataSource}
             allowSorting={false}
@@ -163,12 +159,13 @@ const Process: React.FC = () => {
               cellRender={(e) => {
                 return (
                   <div className="flex justify-between px-5">
-                    {[EnumStatusProcess.RASCUNHO, EnumStatusProcess.PENDENCIA].includes(e.key.status) && (
-                      <i className="btn cursor-pointer" title="Editar" onClick={() => editProcess(e.data)}>
-                        <FaPencilAlt color={colors.primary} />
-                      </i>
-                    )}
-                    {EnumStatusProcess.CAPITACAO === e.key.status && responsibleUser.cargo !== Cargo.CAPITADOR && (
+                    {[EnumStatusProcess.RASCUNHO, EnumStatusProcess.PENDENCIA].includes(e.key.status) &&
+                      actualUser.cargo !== Cargo.VENDEDOR && (
+                        <i className="btn cursor-pointer" title="Editar" onClick={() => editProcess(e.data)}>
+                          <FaPencilAlt color={colors.primary} />
+                        </i>
+                      )}
+                    {EnumStatusProcess.CAPITACAO === e.key.status && actualUser.cargo !== Cargo.CAPITADOR && (
                       <i className="cursor-pointer btn" title="Conferir" onClick={() => editProcess(e.data)}>
                         <TbListDetails size={18} color={colors.primary} />
                       </i>
@@ -177,11 +174,12 @@ const Process: React.FC = () => {
                       EnumStatusProcess.FINALIZADO,
                       EnumStatusProcess.CONFERENCIA,
                       EnumStatusProcess.CAPITACAO,
-                    ].includes(e.key.status) && (
-                      <i className="btn cursor-pointer" title="Excluir" onClick={() => setDialog(true)}>
-                        <FaTrash color={colors.error} />
-                      </i>
-                    )}
+                    ].includes(e.key.status) &&
+                      actualUser.cargo !== Cargo.VENDEDOR && (
+                        <i className="btn cursor-pointer" title="Excluir" onClick={() => setDialog(true)}>
+                          <FaTrash color={colors.error} />
+                        </i>
+                      )}
                     {dialog && (
                       <DialogPopupConfirme
                         title="Confirme"

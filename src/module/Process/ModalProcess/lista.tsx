@@ -92,7 +92,7 @@ const ListProductConf: React.FC<Props> = (props) => {
                 ))}
               </select>
             ) : (
-              <span>{e.measure}</span>
+              <span>{e?.measure}</span>
             )}
           </div>
           <div className="w-2/12">
@@ -113,7 +113,7 @@ const ListProductConf: React.FC<Props> = (props) => {
                 }
               />
             ) : (
-              <span>{UtilsConvert.NumberToDecimal(e.balance)}</span>
+              <span>{UtilsConvert.NumberToDecimal(e.balance?e.balance:0)}</span>
             )}
           </div>
           {props.process?.status === EnumStatusProcess.CAPITACAO && (

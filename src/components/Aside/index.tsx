@@ -31,7 +31,7 @@ export function Aside() {
             label="Venda"
           />
         )}
-        {["MASTER", "VENDEDOR", "CAPITADOR"].indexOf(userAplication.cargo) !==
+        {["MASTER", "VENDEDOR"].indexOf(userAplication.cargo) !==
           -1 && (
           <ButtonMenu
             link="/produto"

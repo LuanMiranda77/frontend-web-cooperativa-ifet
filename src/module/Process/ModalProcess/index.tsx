@@ -15,14 +15,14 @@ import { CreateAsyncSelect } from "../../../components/Inputs/CreateAsyncSelect"
 import TabContent from "../../../components/TabContent";
 import TitleDivider from "../../../components/TitleDivider";
 import { unidadeMedidas } from "../../../constants/constMedidas";
-import { EstabelecimentoType } from "../../../domain";
+import { EstabelecimentoType, UserAplicationType } from "../../../domain";
 import { Cargo, EnumStatusProcess } from "../../../domain/enums";
 import { FeedstockType, initialFeedstock } from "../../../domain/types/feedstock";
 import { ProcessType } from "../../../domain/types/processType";
 import { ProductType, initialProduct } from "../../../domain/types/productType";
 import { selectStateEstabelecimentos } from "../../../store/slices/estabelecimentos.slice";
-import { selectStateUser } from "../../../store/slices/usuario.slice";
 import { UtilsConvert } from "../../../utils/utils_convert";
+import { UtilsUserLocal } from "../../../utils/utils_userLocal";
 import ListProductConf from "./lista";
 import "./style.css";
 
@@ -50,11 +50,11 @@ const ModalProcess: React.FC<Props> = (props) => {
   const steps = ["Materia prima", "Produtos derivado", "Conferência"];
   const [activeStep, setActiveStep] = useState(0);
   const { title, colors } = useContext(ThemeContext);
-  const actualUser = useSelector(selectStateUser);
   const setores = useSelector(selectStateEstabelecimentos);
   const [optionSetores, setOptionSetores] = useState<any[]>([]);
   const [optionFeeds, setOptionFedds] = useState<any[]>([]);
   const [show, setShow] = useState(false);
+  const actualUser = UtilsUserLocal.getTokenLogin() as UserAplicationType;
 
   const alterStep = (type: number) => {
     if (type === 1) {
@@ -200,17 +200,24 @@ const ModalProcess: React.FC<Props> = (props) => {
           <TabContent index={0} value={activeStep}>
             <div className="w-full p-8">
               <div className="w-4/12 mb-5 mt-0">
-                <InputSelectDefault
-                  label="Setor"
-                  options={optionSetores}
-                  name="setor"
-                  isSearchable={false}
-                  placeholder="Selecione..."
-                  value={optionSetores.find((e: any) => e.value === props.process.setor)}
-                  onChange={(e) => props.setProcess({ ...props.process, setor: e.value })}
-                  required
-                  autoFocus
-                />
+                {actualUser.cargo === Cargo.MASTER ? (
+                  <InputSelectDefault
+                    label="Setor"
+                    options={optionSetores}
+                    name="setor"
+                    isSearchable={false}
+                    placeholder="Selecione..."
+                    value={optionSetores.find((e: any) => e.value === props.process.setor)}
+                    onChange={(e) => props.setProcess({ ...props.process, setor: e.value })}
+                    required
+                    autoFocus
+                  />
+                ) : (
+                  <div>
+                    <p className="font-bold">Setor</p>
+                    <span className={`font-bold`} style={{color: colors.primary}}>{optionSetores.find((setor) => setor.value === actualUser.setor)?.label}</span>
+                  </div>
+                )}
               </div>
               <TitleDivider className="pt-10 " title="Dados da matéria prima" />
               <div className="flex mt-10">
@@ -262,7 +269,9 @@ const ModalProcess: React.FC<Props> = (props) => {
                   placeholder="0,000"
                   value={props.feedstock.balance}
                   fixedZeroFinal
-                  onChange={(e) => props.setFeedstock({ ...props.feedstock, balance: Number(e.target.value.replaceAll(',', '.')) })}
+                  onChange={(e) =>
+                    props.setFeedstock({ ...props.feedstock, balance: Number(e.target.value.replaceAll(",", ".")) })
+                  }
                 />
               </div>
             </div>
@@ -288,7 +297,7 @@ const ModalProcess: React.FC<Props> = (props) => {
                     if (e == null) {
                       props.setProduct(initialProduct);
                     } else {
-                      e.balance=0;
+                      e.balance = 0;
                       const obj = {
                         id: e.value,
                         name: e.label,
@@ -319,7 +328,9 @@ const ModalProcess: React.FC<Props> = (props) => {
                   placeholder="0,000"
                   value={props.product.balance}
                   fixedZeroFinal
-                  onChange={(e) => props.setProduct({ ...props.product, balance: Number(e.target.value.replaceAll(',', '.')) })}
+                  onChange={(e) =>
+                    props.setProduct({ ...props.product, balance: Number(e.target.value.replaceAll(",", ".")) })
+                  }
                 />
                 <ButtonBase
                   label="Adicionar"

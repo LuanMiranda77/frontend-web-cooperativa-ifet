@@ -18,7 +18,7 @@ const ModalProduct: React.FC<Props> = ({ ...props }) => {
       isOpen={props.isOpen}
       title="Ficha do produto"
       onRequestClose={props.onClose}
-      height="calc(100vh - 0px)"
+      // height="calc(100vh - 0px)"
       width="500px"
       onClickAction={props.onSave}
     >
